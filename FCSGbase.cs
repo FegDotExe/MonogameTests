@@ -1,7 +1,7 @@
 //Where inheritable classes are defined
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+//using System;
 
 namespace FCSG{
     ///<summary>
@@ -63,8 +63,10 @@ namespace FCSG{
         public float depth{get;set;}
         public SpriteEffects effects=SpriteEffects.None;
         public bool draw{get;set;}
+        protected Wrapper wrapper;
         public SpriteBase(
                 SpriteBatch spriteBatch,
+                Wrapper wrapper=null,
                 float? depth=null, 
                 IntSpriteObjDelegate xDelegate=null, 
                 IntSpriteObjDelegate yDelegate=null,
@@ -75,6 +77,8 @@ namespace FCSG{
                 Color? color=null
         ){
             this.spriteBatch = spriteBatch;
+
+            this.wrapper = wrapper;
 
             if(depth != null) //Sets the depth of the sprite
                 this.depth = (float)depth;
@@ -123,20 +127,32 @@ namespace FCSG{
             this.draw=true;
         }
         public virtual void Draw(bool drawMiddle=true){
+            if(drawMiddle==true){
+                DrawMiddleTexture();
+            }
             //spriteBatch.Draw(texture,new Vector2(x,y),null,color,rotation,origin,1,effects,depth);
         }
+        ///<summary>
+        ///Resizes the texture to the size of the sprite, so that there is no need to resize it every frame; should improve performance.
+        ///</summary>
         public virtual void DrawMiddleTexture(){
             if(midWidth!=width || midHeight!=height){
-                Console.WriteLine("Called a sprite resize: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
+                // Console.WriteLine("Called a sprite resize: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
 
                 midWidth=width;
                 midHeight=height;
 
-                Console.WriteLine("After var update: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
+                // Console.WriteLine("After var update: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
 
                 RenderTarget2D renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice,width,height);
                 Utilities.DrawOntoTarget(renderTarget,this,spriteBatch);
                 middleTexture = renderTarget;
+            }
+        }
+    
+        public void Remove(){
+            if(wrapper!=null){
+                wrapper.Remove(this);
             }
         }
     }

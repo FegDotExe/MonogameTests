@@ -11,7 +11,9 @@ namespace MonogameTests
     {
         Texture2D totem_of_time;
         SpriteFont font;
+
         TextSprite texto;
+        Sprite randomSprite;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -54,7 +56,7 @@ namespace MonogameTests
             RenderTarget2D renderTarget=new RenderTarget2D(GraphicsDevice,2000,2000);
             Utilities.DrawOntoTarget(renderTarget,new ObjectGroup<Object2D>(group.objects.ConvertAll<Object2D>(x=>(Object2D)x)),GraphicsDevice,_spriteBatch);
             
-            wrapper.NewSprite(renderTarget,widthDelegate:(Sprite sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(Sprite sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(Sprite sprite)=>x,yDelegate:(Sprite sprite)=>y);
+            randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
 
             texto=new TextSprite("Simpatico testo di prova che dovrebbe servire a vedere se tutte le cose funzionano a dovere",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000);
             //TextSprite texto=new TextSprite("AaaaaaaaaaaaaaaaAAAAAAAAAAAAAaaaaaaaaaaaaaaaAAAaaaa",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>400,heightDelegate:(SpriteObject sprite)=>400,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>1000);
@@ -81,15 +83,12 @@ namespace MonogameTests
                 y=y+1;
             }
             if(Keyboard.GetState().IsKeyDown(Keys.L)){
-                Console.WriteLine("Sparisce tutto!");
-                group.PerformOnAll((Sprite sprite)=>{
-                    sprite.draw=false;
-                });
+                randomSprite.Remove();
             }
-            else if(Keyboard.GetState().IsKeyDown(Keys.K)){
-                group.PerformOnAll((Sprite sprite)=>{
-                    sprite.draw=true;
-                });
+            if(Keyboard.GetState().IsKeyDown(Keys.Down)){
+                texto.offsetY+=10;
+            }else if(Keyboard.GetState().IsKeyDown(Keys.Up)){
+                texto.offsetY-=10;
             }
 
             base.Update(gameTime);
@@ -145,10 +144,10 @@ namespace MonogameTests
                         spriteBatch,
                         texture,
                         depth:0f,
-                        xDelegate: (Sprite sprite)=>(copyX*(graphicsDevice.Viewport.Width/DIVIDER)), 
-                        yDelegate: (Sprite sprite)=>(copyY*(graphicsDevice.Viewport.Width/DIVIDER)), 
-                        widthDelegate: (Sprite sprite)=>graphicsDevice.Viewport.Width/DIVIDER, 
-                        heightDelegate: (Sprite sprite)=>graphicsDevice.Viewport.Width/DIVIDER,
+                        xDelegate: (SpriteObject sprite)=>(copyX*(graphicsDevice.Viewport.Width/DIVIDER)), 
+                        yDelegate: (SpriteObject sprite)=>(copyY*(graphicsDevice.Viewport.Width/DIVIDER)), 
+                        widthDelegate: (SpriteObject sprite)=>graphicsDevice.Viewport.Width/DIVIDER, 
+                        heightDelegate: (SpriteObject sprite)=>graphicsDevice.Viewport.Width/DIVIDER,
                         group:spriteGroup
                         );
                 }

@@ -32,7 +32,7 @@ namespace FCSG{
 
             spriteBatch.Begin();//TODO: add spriteBatch settings
             group.PerformOnAll((Object2D obj)=>{
-                obj.Draw();
+                obj.Draw(drawMiddle:false);
             });
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
