@@ -37,7 +37,7 @@ namespace FCSG{
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional
 
-            spriteBatch.Begin();//TODO: add spriteBatch settings
+            spriteBatch.Begin(samplerState:SamplerState.PointClamp);//TODO: add spriteBatch settings
             group.PerformOnAll((Object2D obj)=>{
                 obj.Draw(drawMiddle:false);
             });
@@ -52,7 +52,7 @@ namespace FCSG{
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
             spriteObject.Draw(drawMiddle:false);
             spriteBatch.End();
 
@@ -67,7 +67,7 @@ namespace FCSG{
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
             spriteBatch.Draw(texture, Vector2.Zero, Color.White);
             spriteBatch.End();
 
@@ -82,7 +82,7 @@ namespace FCSG{
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
             foreach(Texture2D texture in textures){
                 spriteBatch.Draw(texture, Vector2.Zero, Color.White);
             }

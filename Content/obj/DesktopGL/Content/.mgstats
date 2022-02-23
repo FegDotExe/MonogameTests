@@ -1,1 +1,6 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/assets/totem_of_time.xnb","TextureProcessor","Texture2DContent",3859,1638485,0,163869
+"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/blue.png","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/blue.xnb","TextureProcessor","Texture2DContent",6507,4000085,0,1087204
+"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/FreeSans.xnb","FontDescriptionProcessor","SpriteFontContent",2012,1053730,0,1885237
+"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/red.png","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/red.xnb","TextureProcessor","Texture2DContent",1579,1109,0,0014601
+"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/redl.png","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/redl.xnb","TextureProcessor","Texture2DContent",6710,4000085,0,1057404

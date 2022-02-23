@@ -76,9 +76,13 @@ namespace FCSG{
             IntSpriteObjDelegate originalWidthDelegate=null,
             IntSpriteObjDelegate originalHeightDelegate=null,
             IntSpriteObjDelegate xDelegate=null, 
+            int? x=null,
             IntSpriteObjDelegate yDelegate=null,
+            int? y=null,
             IntSpriteObjDelegate widthDelegate=null, 
+            int? width=null,
             IntSpriteObjDelegate heightDelegate=null,
+            int? height=null,
             float? rotation=null, 
             Vector2? origin=null, 
             Color? color=null,
@@ -96,7 +100,11 @@ namespace FCSG{
             origin:origin,
             color:color,
             group:group,
-            groups:groups
+            groups:groups,
+            x:x,
+            y:y,
+            width:width,
+            height:height
         ){
             this.font = font;
             this._text = text;// Private reference is used so that the texture isn't elaborated before it can be
@@ -133,7 +141,7 @@ namespace FCSG{
 
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
 
             foreach(string lineText in lines){
                 int x=0;

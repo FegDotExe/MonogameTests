@@ -15,9 +15,13 @@ namespace FCSG{
                 Wrapper wrapper=null,
                 float? depth=null, 
                 IntSpriteObjDelegate xDelegate=null, 
+                int? x=null,
                 IntSpriteObjDelegate yDelegate=null,
-                IntSpriteObjDelegate widthDelegate=null, 
+                int? y=null,
+                IntSpriteObjDelegate widthDelegate=null,
+                int? width=null, 
                 IntSpriteObjDelegate heightDelegate=null,
+                int? height=null,
                 float? rotation=null, 
                 Vector2? origin=null, 
                 Color? color=null,
@@ -35,7 +39,11 @@ namespace FCSG{
             origin:origin,
             color:color,
             group:group,
-            groups:groups
+            groups:groups,
+            x:x,
+            y:y,
+            width:width,
+            height:height
         ){
             this.texture = texture;
 
@@ -54,10 +62,14 @@ namespace FCSG{
         }
         public override void Draw(bool drawMiddle=true){
             if(draw){
+                drawMiddle=false;
                 if(drawMiddle==true){
                     DrawMiddleTexture();
                 }
                 spriteBatch.Draw(texture, new Rectangle(this.x,this.y,this.width,this.height),null,color,rotation,origin,effects,depth);
+                //spriteBatch.Draw(texture, new Rectangle(this.x,this.y,this.width,this.height),color); //THIS ONE WORKS
+                //Console.WriteLine("Width: "+((float)this.width/(float)this.texture.Width));
+                //spriteBatch.Draw(texture,new Vector2(this.x,this.y),null,color,rotation,new Vector2(0,0),new Vector2((float)this.width/(float)this.texture.Width,(float)this.height/(float)this.texture.Height),SpriteEffects.None,depth);
             }
         }
     }

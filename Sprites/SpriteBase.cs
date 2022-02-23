@@ -47,9 +47,13 @@ namespace FCSG{
             Wrapper wrapper=null,
             float? depth=null, 
             IntSpriteObjDelegate xDelegate=null, 
+            int? x=null,
             IntSpriteObjDelegate yDelegate=null,
+            int? y=null,
             IntSpriteObjDelegate widthDelegate=null, 
+            int? width=null,
             IntSpriteObjDelegate heightDelegate=null,
+            int? height=null,
             float? rotation=null, 
             Vector2? origin=null, 
             Color? color=null,
@@ -66,22 +70,35 @@ namespace FCSG{
                 this.depth = 0;
 
             //Position delegates
-                if(xDelegate != null)
+                if(x!=null){
+                    this.xDelegate=(SpriteObject sprite)=>(int)x;
+                }
+                else if(xDelegate != null)
                     this.xDelegate = xDelegate;
                 else
                     this.xDelegate = (SpriteObject sprite) => 0;
-                if(yDelegate != null)
+                if(y!=null){
+                    this.yDelegate=(SpriteObject sprite)=>(int)y;
+                }
+                else if(yDelegate != null)
                     this.yDelegate = yDelegate;
                 else
                     this.yDelegate = (SpriteObject sprite) => 0;
 
             //Size delegates
-                if(widthDelegate!=null)
+                if(width!=null){
+                    this.widthDelegate=(SpriteObject sprite)=>(int)width;
+                }
+                else if(widthDelegate!=null)
                     this.widthDelegate = widthDelegate;
                 else
                     this.widthDelegate = (SpriteObject sprite) => 100;
                 midWidth = -1;
-                if(heightDelegate!=null)
+                
+                if(height!=null){
+                    this.heightDelegate=(SpriteObject sprite)=>(int)height;
+                }
+                else if(heightDelegate!=null)
                     this.heightDelegate = heightDelegate;
                 else
                     this.heightDelegate = (SpriteObject sprite) => 100;
@@ -96,7 +113,7 @@ namespace FCSG{
             if(origin!=null){
                 this.origin = (Vector2)origin;
             }else{
-                this.origin = new Vector2(0.5f,0.5f);
+                this.origin = new Vector2(0,0);
             }
 
             if(color!=null){

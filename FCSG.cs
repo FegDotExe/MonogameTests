@@ -23,14 +23,18 @@ namespace FCSG{
             ObjectGroup<SpriteObject> group=null,
             List<ObjectGroup<SpriteObject>> groups=null,
             IntSpriteObjDelegate xDelegate=null, 
+            int? x=null,
             IntSpriteObjDelegate yDelegate=null,
+            int? y=null,
             IntSpriteObjDelegate widthDelegate=null, 
+            int? width=null,
             IntSpriteObjDelegate heightDelegate=null,
+            int? height=null,
             float? rotation=null, 
             Vector2? origin=null, 
             Color? color=null
         ){
-            Sprite newSprite=new Sprite(spriteBatch, texture:texture, wrapper:this, group:group, groups:groups, depth:depth, xDelegate:xDelegate, yDelegate:yDelegate, widthDelegate:widthDelegate, heightDelegate:heightDelegate, rotation:rotation, origin:origin, color:color);
+            Sprite newSprite=new Sprite(spriteBatch, texture:texture, wrapper:this, group:group, groups:groups, depth:depth, xDelegate:xDelegate, yDelegate:yDelegate, widthDelegate:widthDelegate, heightDelegate:heightDelegate, rotation:rotation, origin:origin, color:color, x:x, y:y, width:width, height:height);
             sprites.Add(newSprite);
             return newSprite;
         }
@@ -44,7 +48,7 @@ namespace FCSG{
         }
 
         public void Draw(){
-            spriteBatch.Begin(sortMode:SpriteSortMode.FrontToBack); //TODO: Should add options
+            spriteBatch.Begin(sortMode:SpriteSortMode.FrontToBack,samplerState:SamplerState.PointClamp); //TODO: Should add options
             foreach(SpriteObject sprite in sprites){
                 sprite.Draw();
             }

@@ -10,6 +10,7 @@ namespace MonogameTests
     public class Game1 : Game
     {
         Texture2D totem_of_time;
+        Texture2D red;
         SpriteFont font;
 
         TextSprite texto;
@@ -50,21 +51,30 @@ namespace MonogameTests
             wrapper=new Wrapper(_spriteBatch);
 
             totem_of_time=Content.Load<Texture2D>("assets/totem_of_time");
+            red=Content.Load<Texture2D>("red");
+            Texture2D blue=Content.Load<Texture2D>("blue");
+            Texture2D redl=Content.Load<Texture2D>("redl");
             font=Content.Load<SpriteFont>("FreeSans");
 
             group=new ObjectGroup<SpriteObject>();
 
             // Example of surface-draw->way to create new 2d texture
-            Methods.createGrid(100,100,totem_of_time,GraphicsDevice,spriteGroup:group,_spriteBatch);
+            Methods.createGrid(100,100,blue,GraphicsDevice,spriteGroup:group,_spriteBatch);
             RenderTarget2D renderTarget=new RenderTarget2D(GraphicsDevice,2000,2000);
             Utilities.DrawOntoTarget(renderTarget,new ObjectGroup<Object2D>(group.objects.ConvertAll<Object2D>(x=>(Object2D)x)),_spriteBatch);
             
-            randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
+            //randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
+            randomSprite=wrapper.NewSprite(red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
 
-            texto=new TextSprite("Simpatico testo di prova che dovrebbe servire a vedere se tutte le cose funzionano a dovere",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000);
+            texto=new TextSprite("Simpatico testo di prova che dovrebbe servire a vedere se tutte le cose funzionano a dovere",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f);
             //TextSprite texto=new TextSprite("AaaaaaaaaaaaaaaaAAAAAAAAAAAAAaaaaaaaaaaaaaaaAAAaaaa",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>400,heightDelegate:(SpriteObject sprite)=>400,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>1000);
             // wrapper.NewSprite(texto.texture,depth:1f,widthDelegate:(Sprite sprite)=>400,heightDelegate:(Sprite sprite)=>800);
             wrapper.Add(texto);
+
+            //wrapper.NewSprite(blue,width:100,height:100,xDelegate:(SpriteObject sprite)=>x);
+            wrapper.NewSprite(blue,width:100,height:100);
+            wrapper.NewSprite(red,width:100,height:100,x:100,y:50);
+            //wrapper.NewSprite(blue,width:100,height:100,x:100,y:50);
 
             clock=new GameClock();
             
@@ -74,20 +84,21 @@ namespace MonogameTests
         protected override void Update(GameTime gameTime)
         {
             double requiredTime=0.1d;
-            int amount=10;
+            int amount=100;
+            //Console.WriteLine("x: "+x);
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             if(Keyboard.GetState().IsKeyDown(Keys.D)){
                 //x=x+1;
-                int xCopy=x;
                 if(timeEvent==null){
-                    timeEvent=new TimeEvent(requiredTime,(double time)=>{x=xCopy+(int)(amount*time);}, (double time)=>{x=xCopy+amount;});
+                    int xCopy=x;
+                    timeEvent=new TimeEvent(requiredTime,(double time)=>{x=xCopy+(int)(amount*time);}, (double time)=>{x=xCopy+amount;},(int)clock.elapsed);
                 }
             }
             else if(Keyboard.GetState().IsKeyDown(Keys.A)){
-                int xCopy=x;
                 if(timeEvent==null){
-                    timeEvent=new TimeEvent(requiredTime,(double time)=>{x=xCopy+(int)(-amount*time);}, (double time)=>{x=xCopy-amount;});
+                    int xCopy=x;
+                    timeEvent=new TimeEvent(requiredTime,(double time)=>{x=xCopy+(int)(-amount*time);}, (double time)=>{x=xCopy-amount;},(int)clock.elapsed);
                 }
             }
             if(Keyboard.GetState().IsKeyDown(Keys.W)){
@@ -118,7 +129,7 @@ namespace MonogameTests
             //Console.WriteLine("FPS: "+fps);
             texto.text="FPS: "+fps;
 
-            //clock.Update();
+            clock.Update();
             //Console.WriteLine("Elapsed time: "+clock.elapsed);
             
             if(timeEvent!=null){
@@ -131,9 +142,11 @@ namespace MonogameTests
             //GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.Clear(new Color(0, 0, 0));
 
-            // TODO: Add your drawing code here
-
             wrapper.Draw();
+
+            // _spriteBatch.Begin();
+            // _spriteBatch.Draw(red,new Rectangle(0,0,100,100),Color.White);
+            // _spriteBatch.End();
 
             // _spriteBatch.Begin();
             // _spriteBatch.Draw(totem_of_time, new Vector2(100, 100), Color.White);
