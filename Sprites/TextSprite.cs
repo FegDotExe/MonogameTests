@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System;
 
 namespace FCSG{
+    /// <summary>
+    /// An elaborate sprite which contains text.
+    /// </summary>
     public class TextSprite : SpriteBase{
         SpriteFont font;
         public string text{
@@ -78,18 +81,22 @@ namespace FCSG{
             IntSpriteObjDelegate heightDelegate=null,
             float? rotation=null, 
             Vector2? origin=null, 
-            Color? color=null
+            Color? color=null,
+            ObjectGroup<SpriteObject> group=null,
+            List<ObjectGroup<SpriteObject>> groups=null
         ):base(
-            spriteBatch,
-            wrapper,
-            depth,
-            xDelegate,
-            yDelegate,
-            widthDelegate,
-            heightDelegate,
-            rotation,
-            origin,
-            color
+            spriteBatch:spriteBatch,
+            wrapper:wrapper,
+            depth:depth,
+            xDelegate:xDelegate,
+            yDelegate:yDelegate,
+            widthDelegate:widthDelegate,
+            heightDelegate:heightDelegate,
+            rotation:rotation,
+            origin:origin,
+            color:color,
+            group:group,
+            groups:groups
         ){
             this.font = font;
             this._text = text;// Private reference is used so that the texture isn't elaborated before it can be
@@ -109,6 +116,9 @@ namespace FCSG{
             ElaborateTexture();
         }
 
+        /// <summary>
+        /// Updates the texture of the sprite.
+        /// </summary>
         private void ElaborateTexture(bool reloadDimension=true,bool reloadLines=true){
             if(reloadDimension){
                 renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice, originalWidthDelegate(this), originalHeightDelegate(this));
@@ -148,6 +158,9 @@ namespace FCSG{
             texture=renderTarget;
         }
 
+        /// <summary>
+        /// Splits a string into lines, coherently with the settings of the TextSprite
+        /// </summary>
         private List<string> toLines(string text,WrapMode wrapMode=WrapMode.Character){
             List<string> lines = new List<string>();
             if(wrapMode==WrapMode.Character){
@@ -176,7 +189,7 @@ namespace FCSG{
                         tempLine+=words[i]+" ";
                     }else{
                         if(i==words.Length-1){
-                            string[]  dividedLine=makeLine(tempLine,words[i],wrapMode:WrapMode.Character);
+                            string[] dividedLine=makeLine(tempLine,words[i],wrapMode:WrapMode.Character);
                             // Console.WriteLine("TempLine: "+tempLine);
                             // Console.WriteLine("Left: "+dividedLine[0]);
                             // Console.WriteLine("Right: "+dividedLine[1]);
@@ -207,6 +220,10 @@ namespace FCSG{
             }
             return lines;
         }
+        
+        /// <summary>
+        /// Adds the needed part of right to left and returns the new left with what remains of right. This method is made to fix the edge case in which the last line of a string exceeds the width of the texture on which it should be drawn.
+        /// </summary>
         private string[] makeLine(string left, string right, WrapMode wrapMode=WrapMode.Character){
             // Console.WriteLine("Initial left: "+left);
             for(int i=0; i<right.Length;i++){
