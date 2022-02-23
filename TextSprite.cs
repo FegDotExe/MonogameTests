@@ -13,7 +13,7 @@ namespace FCSG{
             }
             set{
                 _text=value;
-                ElaborateTexture();
+                ElaborateTexture(reloadDimension:false);
             }
         }
         private string _text;

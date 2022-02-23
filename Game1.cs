@@ -35,7 +35,7 @@ namespace MonogameTests
         {
             // TODO: Add your initialization logic here
             Window.AllowUserResizing = true;
-            IsFixedTimeStep=false;
+            IsFixedTimeStep=true;
 
             base.Initialize();
         }
@@ -102,7 +102,7 @@ namespace MonogameTests
                 fps=0;
             }
             //Console.WriteLine("FPS: "+fps);
-            //texto.text="FPS: "+fps;
+            texto.text="FPS: "+fps;
             //GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.Clear(new Color(0, 0, 0));
 
