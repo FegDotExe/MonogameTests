@@ -23,7 +23,7 @@ namespace MonogameTests
         int x=0;
         int y=0;
         float fps=0f;
-        ObjectGroup<Sprite> group;
+        ObjectGroup<SpriteObject> group;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -49,7 +49,7 @@ namespace MonogameTests
             totem_of_time=Content.Load<Texture2D>("assets/totem_of_time");
             font=Content.Load<SpriteFont>("FreeSans");
 
-            group=new ObjectGroup<Sprite>();
+            group=new ObjectGroup<SpriteObject>();
 
             // Example of surface-draw->way to create new 2d texture
             Methods.createGrid(wrapper,100,100,totem_of_time,GraphicsDevice,spriteGroup:group,_spriteBatch);
@@ -135,7 +135,7 @@ namespace MonogameTests
 
     public class Methods{
         private const int DIVIDER=100;
-        public static void createGrid(Wrapper wrapper,int xSize, int ySize, Texture2D texture, GraphicsDevice graphicsDevice, ObjectGroup<Sprite> spriteGroup, SpriteBatch spriteBatch){
+        public static void createGrid(Wrapper wrapper,int xSize, int ySize, Texture2D texture, GraphicsDevice graphicsDevice, ObjectGroup<SpriteObject> spriteGroup, SpriteBatch spriteBatch){
             for(int i=0;i<xSize;i++){
                 int copyX=i;
                 for(int j=0;j<ySize;j++){

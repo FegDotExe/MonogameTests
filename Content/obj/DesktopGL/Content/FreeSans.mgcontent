@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont</SourceFile>
+  <SourceFile>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont</SourceFile>
   <SourceTime>2022-02-21T22:54:22.1844711+01:00</SourceTime>
-  <DestFile>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/FreeSans.xnb</DestFile>
-  <DestTime>2022-02-23T10:28:56.238208+01:00</DestTime>
+  <DestFile>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/FreeSans.xnb</DestFile>
+  <DestTime>2022-02-23T10:38:27.7069223+01:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+02:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

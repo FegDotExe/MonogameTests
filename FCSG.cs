@@ -12,15 +12,15 @@ namespace FCSG{
     ///A class which rapresents a sprite
     ///</summary>
     public class Sprite : SpriteBase{
-        private List<ObjectGroup<Sprite>> groups{get;set;} //A list of all the groups this sprite is in
+        private List<ObjectGroup<SpriteObject>> groups{get;set;} //A list of all the groups this sprite is in
 
         //TODO: add ability to give int instead of delegate
         public Sprite(
                 SpriteBatch spriteBatch, 
                 Texture2D texture,
                 Wrapper wrapper=null,
-                ObjectGroup<Sprite> group=null,
-                List<ObjectGroup<Sprite>> groups=null,
+                ObjectGroup<SpriteObject> group=null,
+                List<ObjectGroup<SpriteObject>> groups=null,
                 float? depth=null, 
                 IntSpriteObjDelegate xDelegate=null, 
                 IntSpriteObjDelegate yDelegate=null,
@@ -43,14 +43,14 @@ namespace FCSG{
         ){
             this.texture = texture;
 
-            this.groups=new List<ObjectGroup<Sprite>>();
+            this.groups=new List<ObjectGroup<SpriteObject>>();
 
             if(group!=null){ //Adds the sprite to the group
                 this.groups.Add(group);
                 group.Add(this);
             }
             if (groups!=null){
-                foreach(ObjectGroup<Sprite> spriteGroup in groups){
+                foreach(ObjectGroup<SpriteObject> spriteGroup in groups){
                     this.groups.Add(spriteGroup);
                     spriteGroup.Add(this);
                 }
@@ -80,8 +80,8 @@ namespace FCSG{
         public Sprite NewSprite(
             Texture2D texture, 
             float? depth=null, 
-            ObjectGroup<Sprite> group=null,
-            List<ObjectGroup<Sprite>> groups=null,
+            ObjectGroup<SpriteObject> group=null,
+            List<ObjectGroup<SpriteObject>> groups=null,
             IntSpriteObjDelegate xDelegate=null, 
             IntSpriteObjDelegate yDelegate=null,
             IntSpriteObjDelegate widthDelegate=null, 
