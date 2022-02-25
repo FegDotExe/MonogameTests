@@ -1,9 +1,8 @@
-//Where inheritable classes are defined
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-//using System;
+//Home to all the random methods and classes that are used in the FCSG namespace.
 
 namespace FCSG{
+    public delegate int IntSpriteDelegate(Sprite sprite);
+    public delegate int IntSpriteObjDelegate(SpriteObject sprite);
     ///<summary>
     ///An interface which rapresents a 2d object with a position and a size
     ///</summary>

@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System;
 
 namespace FCSG{
-    public delegate int IntSpriteDelegate(Sprite sprite);
-    public delegate int IntSpriteObjDelegate(SpriteObject sprite);
-
     public class Wrapper{
         private List<SpriteObject> sprites;
         private SpriteBatch spriteBatch;

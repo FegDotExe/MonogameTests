@@ -9,8 +9,10 @@ namespace MonogameTests
 {
     public class Game1 : Game
     {
+        bool left_down=false;
         Texture2D totem_of_time;
         Texture2D red;
+        Texture2D blue;
         SpriteFont font;
 
         TextSprite texto;
@@ -37,7 +39,6 @@ namespace MonogameTests
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             Window.AllowUserResizing = true;
             IsFixedTimeStep=true;
 
@@ -52,7 +53,7 @@ namespace MonogameTests
 
             totem_of_time=Content.Load<Texture2D>("assets/totem_of_time");
             red=Content.Load<Texture2D>("red");
-            Texture2D blue=Content.Load<Texture2D>("blue");
+            blue=Content.Load<Texture2D>("blue");
             Texture2D redl=Content.Load<Texture2D>("redl");
             font=Content.Load<SpriteFont>("FreeSans");
 
@@ -66,15 +67,22 @@ namespace MonogameTests
             //randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
             randomSprite=wrapper.NewSprite(red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
 
-            texto=new TextSprite("Simpatico testo di prova che dovrebbe servire a vedere se tutte le cose funzionano a dovere",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f);
+            texto=new TextSprite("",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f);
             //TextSprite texto=new TextSprite("AaaaaaaaaaaaaaaaAAAAAAAAAAAAAaaaaaaaaaaaaaaaAAAaaaa",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>400,heightDelegate:(SpriteObject sprite)=>400,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>1000);
             // wrapper.NewSprite(texto.texture,depth:1f,widthDelegate:(Sprite sprite)=>400,heightDelegate:(Sprite sprite)=>800);
             wrapper.Add(texto);
 
             //wrapper.NewSprite(blue,width:100,height:100,xDelegate:(SpriteObject sprite)=>x);
-            wrapper.NewSprite(blue,width:100,height:100);
-            wrapper.NewSprite(red,width:100,height:100,x:100,y:50);
             //wrapper.NewSprite(blue,width:100,height:100,x:100,y:50);
+
+            LayerGroup layerGroup=new LayerGroup();
+            layerGroup.Add(randomSprite);
+            layerGroup.Add(texto);
+            layerGroup.Add(wrapper.NewSprite(blue,width:100,height:100,depth:0.5f));
+            layerGroup.Add(wrapper.NewSprite(red,width:100,height:100,x:100,y:50,depth:0.5f));
+            foreach(SpriteBase sprite in layerGroup.objects){
+                Console.WriteLine("depth: "+sprite.depth);
+            }
 
             clock=new GameClock();
             
@@ -114,6 +122,22 @@ namespace MonogameTests
                 texto.offsetY+=10;
             }else if(Keyboard.GetState().IsKeyDown(Keys.Up)){
                 texto.offsetY-=10;
+            }
+
+            if(!left_down && Mouse.GetState().LeftButton==ButtonState.Pressed){
+                Console.WriteLine("Pressed");
+                if(randomSprite.CollidesWith(Mouse.GetState().Position.X,Mouse.GetState().Position.Y)){
+                    if(randomSprite.texture==red){
+                        randomSprite.texture=blue;
+                    }else{
+                        randomSprite.texture=red;
+                    }
+                }
+                left_down=true;
+            }
+            if(left_down && Mouse.GetState().LeftButton==ButtonState.Released){
+                Console.WriteLine("Released");
+                left_down=false;
             }
 
             base.Update(gameTime);

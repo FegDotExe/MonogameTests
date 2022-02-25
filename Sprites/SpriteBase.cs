@@ -7,6 +7,7 @@ namespace FCSG{
     /// The base sprite class, from which other classes inherit.
     /// </summary>
     public class SpriteBase : SpriteObject{
+        #region 
         protected SpriteBatch spriteBatch;
         //Position values
             public int x{
@@ -135,6 +136,7 @@ namespace FCSG{
                 }
             }
         }
+        #endregion
         public virtual void Draw(bool drawMiddle=true){
             if(drawMiddle==true){
                 DrawMiddleTexture();
@@ -163,6 +165,13 @@ namespace FCSG{
             if(wrapper!=null){
                 wrapper.Remove(this);
             }
+        }
+
+        public bool CollidesWith(int x, int y){
+            if(x>=this.x && x<=this.x+width && y>=this.y && y<=this.y+height){
+                return true;
+            }
+            return false;
         }
     }
 }

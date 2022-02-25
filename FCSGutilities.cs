@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace FCSG{
     public delegate void TypeAction<Type>(Type type);
@@ -100,6 +101,45 @@ namespace FCSG{
             Utilities.DrawOntoTarget(renderTarget, textures, spriteBatch);
             
             return renderTarget;
+        }
+    }
+
+    /// <summary>
+    /// A class which stores sprites in a list, keeping them ordered by their depth, with the ones with higher values in front
+    /// </summary>
+    public class LayerGroup{
+        public List<SpriteBase> objects; //TODO: decide if this should be private or not
+        public LayerGroup(){
+            objects=new List<SpriteBase>();
+        }
+        public void Add(SpriteBase sprite){
+            this.Add(sprite,this.objects);
+        }
+        private void Add(SpriteBase sprite, List<SpriteBase> objects){
+            if(objects.Count==0){
+                objects.Add(sprite);
+            }else{
+                int i=0;
+                for(i=objects.Count; i>0 && objects[i-1].depth<sprite.depth; i--){
+                    objects.Insert(i,objects[i-1]);
+                }
+                objects[i]=sprite;
+            }
+        }
+
+        public void Remove(SpriteBase sprite){
+            objects.Remove(sprite);
+        }
+
+        /// <summary>
+        /// Reorders all the objects in the group
+        /// </summary>
+        public void Update(){
+            List<SpriteBase> newObjects=new List<SpriteBase>();
+            foreach(SpriteBase sprite in objects){
+                this.Add(sprite,newObjects);
+            }
+            objects=newObjects;
         }
     }
 }
