@@ -142,4 +142,27 @@ namespace FCSG{
             objects=newObjects;
         }
     }
+
+    /// <summary>
+    /// A class made to make it easier to set clicks configurations for a sprite
+    /// </summary>
+    public class ClickConfig{
+        private bool left;
+        private bool right;
+        private bool middle;
+        private bool wheel;
+        private bool hover;
+
+        public ClickConfig(bool left=false, bool middle=false, bool right=false, bool wheel=false, bool hover=false){
+            this.left=left;
+            this.middle=middle;
+            this.right=right;
+            this.wheel=wheel;
+            this.hover=hover;
+        }
+
+        public bool[] toArray(){
+            return new bool[]{left,middle,right,wheel,hover};
+        }
+    }
 }

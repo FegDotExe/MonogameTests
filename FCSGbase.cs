@@ -3,6 +3,7 @@
 namespace FCSG{
     public delegate int IntSpriteDelegate(Sprite sprite);
     public delegate int IntSpriteObjDelegate(SpriteObject sprite);
+    public delegate bool ClickDelegate(SpriteBase sprite, int x, int y);
     ///<summary>
     ///An interface which rapresents a 2d object with a position and a size
     ///</summary>
@@ -26,5 +27,12 @@ namespace FCSG{
     ///</summary>
     public interface SpriteObject : Object2D, BoolDrawable{
         
+    }
+    public enum Clicks{
+        Left,
+        Middle,
+        Right,
+        WheelHover,
+        Hover
     }
 }

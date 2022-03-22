@@ -8,7 +8,6 @@ namespace FCSG{
     ///A class which rapresents a sprite
     ///</summary>
     public class Sprite : SpriteBase{
-        //TODO: add ability to give int instead of delegate
         public Sprite(
                 SpriteBatch spriteBatch, 
                 Texture2D texture,
@@ -26,7 +25,12 @@ namespace FCSG{
                 Vector2? origin=null, 
                 Color? color=null,
                 ObjectGroup<SpriteObject> group=null,
-                List<ObjectGroup<SpriteObject>> groups=null
+                List<ObjectGroup<SpriteObject>> groups=null,
+            ClickDelegate leftClickDelegate=null,
+            ClickDelegate middleClickDelegate=null,
+            ClickDelegate rightClickDelegate=null,
+            ClickDelegate wheelHoverDelegate=null,
+            ClickDelegate hoverDelegate=null
         ) : base(
             spriteBatch:spriteBatch,
             wrapper:wrapper,
@@ -43,7 +47,12 @@ namespace FCSG{
             x:x,
             y:y,
             width:width,
-            height:height
+            height:height,
+            leftClickDelegate:leftClickDelegate,
+            middleClickDelegate:middleClickDelegate,
+            rightClickDelegate:rightClickDelegate,
+            wheelHoverDelegate:wheelHoverDelegate,
+            hoverDelegate:hoverDelegate
         ){
             this.texture = texture;
 

@@ -4,11 +4,11 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png</File>
-    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont</File>
-    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/red.png</File>
-    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/blue.png</File>
-    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/redl.png</File>
+    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png</File>
+    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont</File>
+    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/red.png</File>
+    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/blue.png</File>
+    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/redl.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

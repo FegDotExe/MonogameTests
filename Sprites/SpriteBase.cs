@@ -7,7 +7,7 @@ namespace FCSG{
     /// The base sprite class, from which other classes inherit.
     /// </summary>
     public class SpriteBase : SpriteObject{
-        #region 
+        #region Fields
         protected SpriteBatch spriteBatch;
         //Position values
             public int x{
@@ -43,6 +43,14 @@ namespace FCSG{
         public bool draw{get;set;}
         protected Wrapper wrapper;
         protected List<ObjectGroup<SpriteObject>> groups{get;set;}
+        //Click delegates
+            protected ClickDelegate leftClickDelegate;
+            protected ClickDelegate middleClickDelegate;
+            protected ClickDelegate rightClickDelegate;
+            protected ClickDelegate wheelHoverDelegate;
+            protected ClickDelegate hoverDelegate;
+        #endregion Fields
+        #region Constructors
         public SpriteBase(
             SpriteBatch spriteBatch,
             Wrapper wrapper=null,
@@ -59,7 +67,12 @@ namespace FCSG{
             Vector2? origin=null, 
             Color? color=null,
             ObjectGroup<SpriteObject> group=null,
-            List<ObjectGroup<SpriteObject>> groups=null
+            List<ObjectGroup<SpriteObject>> groups=null,
+            ClickDelegate leftClickDelegate=null,
+            ClickDelegate middleClickDelegate=null,
+            ClickDelegate rightClickDelegate=null,
+            ClickDelegate wheelHoverDelegate=null,
+            ClickDelegate hoverDelegate=null
         ){
             this.spriteBatch = spriteBatch;
 
@@ -135,8 +148,30 @@ namespace FCSG{
                     spriteGroup.Add(this);
                 }
             }
+
+            //Click delegates
+                if(leftClickDelegate!=null && this.wrapper!=null){
+                    this.wrapper.leftClick.Add(this);
+                }
+                this.leftClickDelegate = leftClickDelegate;
+                if(middleClickDelegate!=null && this.wrapper!=null){
+                    this.wrapper.middleClick.Add(this);
+                }
+                this.middleClickDelegate = middleClickDelegate;
+                if(rightClickDelegate!=null && this.wrapper!=null){
+                    this.wrapper.rightClick.Add(this);
+                }
+                this.rightClickDelegate = rightClickDelegate;
+                if(wheelHoverDelegate!=null && this.wrapper!=null){
+                    this.wrapper.wheelHover.Add(this);
+                }
+                this.wheelHoverDelegate = wheelHoverDelegate;
+                if(hoverDelegate!=null && this.wrapper!=null){
+                    this.wrapper.hover.Add(this);
+                }
+                this.hoverDelegate = hoverDelegate;
         }
-        #endregion
+        #endregion Constructors
         public virtual void Draw(bool drawMiddle=true){
             if(drawMiddle==true){
                 DrawMiddleTexture();
@@ -172,6 +207,41 @@ namespace FCSG{
                 return true;
             }
             return false;
+        }
+
+        ///<summary>
+        ///Checks if the sprite is colliding with another sprite and triggers the right click delegate.
+        ///</summary>
+        public void Clicked(int x, int y, Clicks clickType){
+            if(this.CollidesWith(x,y)){
+                switch(clickType){
+                    case Clicks.Left:
+                        if(leftClickDelegate!=null){
+                            leftClickDelegate(this,x,y);
+                        }
+                        break;
+                    case Clicks.Middle:
+                        if(middleClickDelegate!=null){
+                            middleClickDelegate(this,x,y);
+                        }
+                        break;
+                    case Clicks.Right:
+                        if(rightClickDelegate!=null){
+                            rightClickDelegate(this,x,y);
+                        }
+                        break;
+                    case Clicks.WheelHover:
+                        if(wheelHoverDelegate!=null){
+                            wheelHoverDelegate(this,x,y);
+                        }
+                        break;
+                    case Clicks.Hover:
+                        if(hoverDelegate!=null){
+                            hoverDelegate(this,x,y);
+                        }
+                        break;
+                }
+            }
         }
     }
 }

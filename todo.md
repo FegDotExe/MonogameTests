@@ -1,0 +1,1 @@
+- Should add a way to add/remove sprite objects to LayerGroups dynamically; example: if you enable a sprite to be clicked, it should be added to the Wrapper's click object

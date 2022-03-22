@@ -65,7 +65,15 @@ namespace MonogameTests
             Utilities.DrawOntoTarget(renderTarget,new ObjectGroup<Object2D>(group.objects.ConvertAll<Object2D>(x=>(Object2D)x)),_spriteBatch);
             
             //randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
-            randomSprite=wrapper.NewSprite(red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
+            randomSprite=wrapper.NewSprite(red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y,leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
+                if(randomSprite.texture==red){
+                    randomSprite.texture=blue;
+                }else{
+                    randomSprite.texture=red;
+                }
+                return true;
+            }
+            );
 
             texto=new TextSprite("",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f);
             //TextSprite texto=new TextSprite("AaaaaaaaaaaaaaaaAAAAAAAAAAAAAaaaaaaaaaaaaaaaAAAaaaa",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>400,heightDelegate:(SpriteObject sprite)=>400,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>1000);
@@ -124,15 +132,18 @@ namespace MonogameTests
                 texto.offsetY-=10;
             }
 
+            //TODO: add an input controller to check if mouse was just pressed or is being held down.
+
             if(!left_down && Mouse.GetState().LeftButton==ButtonState.Pressed){
-                Console.WriteLine("Pressed");
-                if(randomSprite.CollidesWith(Mouse.GetState().Position.X,Mouse.GetState().Position.Y)){
-                    if(randomSprite.texture==red){
-                        randomSprite.texture=blue;
-                    }else{
-                        randomSprite.texture=red;
-                    }
-                }
+                wrapper.Click(Clicks.Left,Mouse.GetState().X,Mouse.GetState().Y);
+                // Console.WriteLine("Pressed");
+                // if(randomSprite.CollidesWith(Mouse.GetState().Position.X,Mouse.GetState().Position.Y)){
+                //     if(randomSprite.texture==red){
+                //         randomSprite.texture=blue;
+                //     }else{
+                //         randomSprite.texture=red;
+                //     }
+                // }
                 left_down=true;
             }
             if(left_down && Mouse.GetState().LeftButton==ButtonState.Released){
