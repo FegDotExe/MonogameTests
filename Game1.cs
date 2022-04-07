@@ -9,7 +9,9 @@ namespace MonogameTests
 {
     public class Game1 : Game
     {
-        bool left_down=false;
+        bool left_held=false;
+        bool middle_held=false;
+        bool right_held=false;
         Texture2D totem_of_time;
         Texture2D red;
         Texture2D blue;
@@ -133,22 +135,16 @@ namespace MonogameTests
             }
 
             //TODO: add an input controller to check if mouse was just pressed or is being held down.
-
-            if(!left_down && Mouse.GetState().LeftButton==ButtonState.Pressed){
+            if(!left_held && Mouse.GetState().LeftButton==ButtonState.Pressed){
                 wrapper.Click(Clicks.Left,Mouse.GetState().X,Mouse.GetState().Y);
-                // Console.WriteLine("Pressed");
-                // if(randomSprite.CollidesWith(Mouse.GetState().Position.X,Mouse.GetState().Position.Y)){
-                //     if(randomSprite.texture==red){
-                //         randomSprite.texture=blue;
-                //     }else{
-                //         randomSprite.texture=red;
-                //     }
-                // }
-                left_down=true;
+                left_held=true;
             }
-            if(left_down && Mouse.GetState().LeftButton==ButtonState.Released){
+            if(left_held && Mouse.GetState().LeftButton==ButtonState.Released){
                 Console.WriteLine("Released");
-                left_down=false;
+                left_held=false;
+            }
+            if(Mouse.GetState().ScrollWheelValue!=0){
+                Console.WriteLine("Mouse scroll: "+Mouse.GetState().ScrollWheelValue);
             }
 
             base.Update(gameTime);

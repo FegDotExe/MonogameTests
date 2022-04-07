@@ -53,11 +53,32 @@ namespace FCSG{
         }
         #endregion NewSprite
 
+        /// <summary>
+        /// Completely handles sprite addition (Adds to draw and click groups).
+        /// </summary>
         public void Add(SpriteBase sprite){
+            if(sprite.leftClickDelegate!=null)
+                leftClick.Add(sprite);
+            if(sprite.middleClickDelegate!=null)
+                middleClick.Add(sprite);
+            if(sprite.rightClickDelegate!=null)
+                rightClick.Add(sprite);
+            if(sprite.wheelHoverDelegate!=null)
+                wheelHover.Add(sprite);
+            if(sprite.hoverDelegate!=null)
+                hover.Add(sprite);
             sprites.Add(sprite);
         }
 
+        /// <summary>
+        /// Completely handles sprite removal (Removes from draw and click groups).
+        /// </summary>
         public void Remove(SpriteBase sprite){
+            leftClick.Remove(sprite);
+            middleClick.Remove(sprite);
+            rightClick.Remove(sprite);
+            wheelHover.Remove(sprite);
+            hover.Remove(sprite);
             sprites.Remove(sprite);
         }
 

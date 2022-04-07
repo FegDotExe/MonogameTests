@@ -3,6 +3,10 @@
 namespace FCSG{
     public delegate int IntSpriteDelegate(Sprite sprite);
     public delegate int IntSpriteObjDelegate(SpriteObject sprite);
+
+    ///<summary>
+    ///A delegate used for click events. It returns true if the click should go on and look for the other clicks.
+    ///</summary>
     public delegate bool ClickDelegate(SpriteBase sprite, int x, int y);
     ///<summary>
     ///An interface which rapresents a 2d object with a position and a size

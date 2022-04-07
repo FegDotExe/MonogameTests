@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
+
 namespace FCSG{
     /// <summary>
     /// The base sprite class, from which other classes inherit.
@@ -35,20 +36,20 @@ namespace FCSG{
             protected int midHeight{get;set;}
         public Texture2D texture{get;set;}
         protected Texture2D middleTexture;
-        public Color color{get;set;}
+        public Color color{get;set;} //Used when the sprite is drawn
         public float rotation{get;set;}
         public Vector2 origin{get;set;}
         public float depth{get;set;}
         public SpriteEffects effects=SpriteEffects.None;
-        public bool draw{get;set;}
-        protected Wrapper wrapper;
+        public bool draw{get;set;} //Wether the sprite will be drawn or not
+        protected Wrapper wrapper; //The wrapper which contains the sprite
         protected List<ObjectGroup<SpriteObject>> groups{get;set;}
         //Click delegates
-            protected ClickDelegate leftClickDelegate;
-            protected ClickDelegate middleClickDelegate;
-            protected ClickDelegate rightClickDelegate;
-            protected ClickDelegate wheelHoverDelegate;
-            protected ClickDelegate hoverDelegate;
+            public ClickDelegate leftClickDelegate;
+            public ClickDelegate middleClickDelegate;
+            public ClickDelegate rightClickDelegate;
+            public ClickDelegate wheelHoverDelegate;
+            public ClickDelegate hoverDelegate;
         #endregion Fields
         #region Constructors
         public SpriteBase(
@@ -150,26 +151,14 @@ namespace FCSG{
             }
 
             //Click delegates
-                if(leftClickDelegate!=null && this.wrapper!=null){
-                    this.wrapper.leftClick.Add(this);
-                }
                 this.leftClickDelegate = leftClickDelegate;
-                if(middleClickDelegate!=null && this.wrapper!=null){
-                    this.wrapper.middleClick.Add(this);
-                }
                 this.middleClickDelegate = middleClickDelegate;
-                if(rightClickDelegate!=null && this.wrapper!=null){
-                    this.wrapper.rightClick.Add(this);
-                }
                 this.rightClickDelegate = rightClickDelegate;
-                if(wheelHoverDelegate!=null && this.wrapper!=null){
-                    this.wrapper.wheelHover.Add(this);
-                }
                 this.wheelHoverDelegate = wheelHoverDelegate;
-                if(hoverDelegate!=null && this.wrapper!=null){
-                    this.wrapper.hover.Add(this);
-                }
                 this.hoverDelegate = hoverDelegate;
+            if(wrapper!=null){
+                wrapper.Add(this);
+            }
         }
         #endregion Constructors
         public virtual void Draw(bool drawMiddle=true){
@@ -202,6 +191,7 @@ namespace FCSG{
             }
         }
 
+        //TODO: make a method which takes a rectangle class to check collisions, so that it is more linear and compatible with actual game objects
         public bool CollidesWith(int x, int y){
             if(x>=this.x && x<=this.x+width && y>=this.y && y<=this.y+height){
                 return true;

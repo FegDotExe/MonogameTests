@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 using System.Collections;
 
 namespace FCSG{
@@ -29,6 +30,9 @@ namespace FCSG{
         }
     }
 
+    /// <summary>
+    /// A class which stores useful static methods
+    /// </summary>
     public class Utilities{
 
         /// <summary>
@@ -101,6 +105,18 @@ namespace FCSG{
             Utilities.DrawOntoTarget(renderTarget, textures, spriteBatch);
             
             return renderTarget;
+        }
+    
+        public static void UpdateMouse(MouseState mouseState, MouseHandler mouseHandler){
+            if((mouseState.LeftButton==ButtonState.Pressed)){
+                if(mouseHandler.IsNewDown(Clicks.Left)){
+                    mouseHandler.Held(Clicks.Left,mouseState.X,mouseState.Y);
+                }
+                mouseHandler.Down(Clicks.Left, mouseState.X, mouseState.Y);
+            }else{
+                mouseHandler.Up(Clicks.Left,mouseState.X,mouseState.Y);
+            }
+            //TODO: finish this and reevaluate life choices (is a mouse handler really needed?)
         }
     }
 
