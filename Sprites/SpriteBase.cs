@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System;
 
 
 namespace FCSG{
@@ -36,13 +37,13 @@ namespace FCSG{
             protected int midHeight{get;set;}
         public Texture2D texture{get;set;}
         protected Texture2D middleTexture;
-        public Color color{get;set;} //Used when the sprite is drawn
+        public Color color; //Used when the sprite is drawn
         public float rotation{get;set;}
         public Vector2 origin{get;set;}
         public float depth{get;set;}
         public SpriteEffects effects=SpriteEffects.None;
         public bool draw{get;set;} //Wether the sprite will be drawn or not
-        protected Wrapper wrapper; //The wrapper which contains the sprite
+        public Wrapper wrapper; //The wrapper which contains the sprite
         protected List<ObjectGroup<SpriteObject>> groups{get;set;}
         //Click delegates
             public ClickDelegate leftClickDelegate;
@@ -52,6 +53,23 @@ namespace FCSG{
             public ClickDelegate hoverDelegate;
         #endregion Fields
         #region Constructors
+        /// <param name="depth">The depth of the sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0.</param>
+        /// <param name="xDelegate">The delegate which returns the x position of the sprite.</param>
+        /// <param name="yDelegate">The delegate which returns the y position of the sprite.</param>
+        /// <param name="widthDelegate">The delegate which returns the width of the sprite.</param>
+        /// <param name="heightDelegate">The delegate which returns the height of the sprite.</param>
+        /// <param name="rotation">The rotation of the sprite. (I should probably not touch this)</param>
+        /// <param name="origin">The origin of the sprite. (I should probably not touch this)</param>
+        /// <param name="color">The color of the sprite.</param>
+        /// <param name="group">A group to which the sprite will be added when constructed.</param>
+        /// <param name="groups">A list of groups to which the sprite will be added when constructed.</param>
+        /// <param name="leftClickDelegate">The delegate which will be called when the sprite is clicked with the left mouse button.</param>
+        /// <param name="middleClickDelegate">The delegate which will be called when the sprite is clicked with the middle mouse button.</param>
+        /// <param name="rightClickDelegate">The delegate which will be called when the sprite is clicked with the right mouse button.</param>
+        /// <param name="wheelHoverDelegate">The delegate which will be called when the scrolls.</param>
+        /// <param name="hoverDelegate">The delegate which will be called when the mouse is over the sprite.</param>
+        /// <param name="spritesDict">A dictionary to which the sprite will be added once constructed.</param>
+        /// <param name="dictKey">The key the dictionary will use when inserted in the <c>spritesDict</c></param>
         public SpriteBase(
             SpriteBatch spriteBatch,
             Wrapper wrapper=null,
@@ -73,7 +91,9 @@ namespace FCSG{
             ClickDelegate middleClickDelegate=null,
             ClickDelegate rightClickDelegate=null,
             ClickDelegate wheelHoverDelegate=null,
-            ClickDelegate hoverDelegate=null
+            ClickDelegate hoverDelegate=null,
+            Dictionary<string, SpriteBase> spritesDict=null,
+            string dictKey=null
         ){
             this.spriteBatch = spriteBatch;
 
@@ -149,6 +169,13 @@ namespace FCSG{
                     spriteGroup.Add(this);
                 }
             }
+            if(spritesDict!=null){
+                if(dictKey!=null){
+                    spritesDict.Add(dictKey,this);
+                }else{
+                    Console.WriteLine("Warning: SpriteBase constructor: dictKey is null, thus the object was not added to the dictionary.");
+                }
+            }
 
             //Click delegates
                 this.leftClickDelegate = leftClickDelegate;
@@ -162,11 +189,18 @@ namespace FCSG{
         }
         #endregion Constructors
         public virtual void Draw(bool drawMiddle=true){
+            BasicDraw(this.spriteBatch,drawMiddle);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void BasicDraw(SpriteBatch spriteBatch, bool drawMiddle=true){
             if(drawMiddle==true){
                 DrawMiddleTexture();
             }
-            //spriteBatch.Draw(texture,new Vector2(x,y),null,color,rotation,origin,1,effects,depth);
         }
+
         ///<summary>
         ///Resizes the texture to the size of the sprite, so that there is no need to resize it every frame; should improve performance.
         ///</summary>

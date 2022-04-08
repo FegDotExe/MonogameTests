@@ -57,16 +57,22 @@ namespace FCSG{
         /// Completely handles sprite addition (Adds to draw and click groups).
         /// </summary>
         public void Add(SpriteBase sprite){
-            if(sprite.leftClickDelegate!=null)
+            if(sprite.leftClickDelegate!=null){
                 leftClick.Add(sprite);
-            if(sprite.middleClickDelegate!=null)
+            }
+            if(sprite.middleClickDelegate!=null){
                 middleClick.Add(sprite);
-            if(sprite.rightClickDelegate!=null)
+            }
+            if(sprite.rightClickDelegate!=null){
                 rightClick.Add(sprite);
-            if(sprite.wheelHoverDelegate!=null)
+            }
+            if(sprite.wheelHoverDelegate!=null){
                 wheelHover.Add(sprite);
-            if(sprite.hoverDelegate!=null)
+            }
+            if(sprite.hoverDelegate!=null){
                 hover.Add(sprite);
+            }
+            sprite.wrapper=this;
             sprites.Add(sprite);
         }
 
@@ -79,6 +85,7 @@ namespace FCSG{
             rightClick.Remove(sprite);
             wheelHover.Remove(sprite);
             hover.Remove(sprite);
+            sprite.wrapper=null;
             sprites.Remove(sprite);
         }
 

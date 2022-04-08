@@ -30,7 +30,9 @@ namespace FCSG{
             ClickDelegate middleClickDelegate=null,
             ClickDelegate rightClickDelegate=null,
             ClickDelegate wheelHoverDelegate=null,
-            ClickDelegate hoverDelegate=null
+            ClickDelegate hoverDelegate=null,
+            Dictionary<string, SpriteBase> spritesDict=null,
+            string dictKey=null
         ) : base(
             spriteBatch:spriteBatch,
             wrapper:wrapper,
@@ -52,7 +54,9 @@ namespace FCSG{
             middleClickDelegate:middleClickDelegate,
             rightClickDelegate:rightClickDelegate,
             wheelHoverDelegate:wheelHoverDelegate,
-            hoverDelegate:hoverDelegate
+            hoverDelegate:hoverDelegate,
+            spritesDict:spritesDict,
+            dictKey:dictKey
         ){
             this.texture = texture;
 
@@ -70,15 +74,17 @@ namespace FCSG{
             this.draw=true;
         }
         public override void Draw(bool drawMiddle=true){
+            BasicDraw(this.spriteBatch,drawMiddle);
+        }
+
+        public override void BasicDraw(SpriteBatch spriteBatch, bool drawMiddle = true)
+        {
             if(draw){
                 drawMiddle=false;
                 if(drawMiddle==true){
                     DrawMiddleTexture();
                 }
                 spriteBatch.Draw(texture, new Rectangle(this.x,this.y,this.width,this.height),null,color,rotation,origin,effects,depth);
-                //spriteBatch.Draw(texture, new Rectangle(this.x,this.y,this.width,this.height),color); //THIS ONE WORKS
-                //Console.WriteLine("Width: "+((float)this.width/(float)this.texture.Width));
-                //spriteBatch.Draw(texture,new Vector2(this.x,this.y),null,color,rotation,new Vector2(0,0),new Vector2((float)this.width/(float)this.texture.Width,(float)this.height/(float)this.texture.Height),SpriteEffects.None,depth);
             }
         }
     }

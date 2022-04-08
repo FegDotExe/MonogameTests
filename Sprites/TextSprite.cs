@@ -4,10 +4,14 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
 
+
 namespace FCSG{
     /// <summary>
     /// An elaborate sprite which contains text.
     /// </summary>
+    /// <remarks>
+    /// The text is first drawn on a texture, the size of which is determined by originalWidth and originalHeight. The texture is then drawn on the screen. The texture is updated when ElaborateTexture() is called.
+    /// </remarks>
     public class TextSprite : SpriteBase{
         SpriteFont font;
         public string text{
@@ -63,6 +67,9 @@ namespace FCSG{
         }
         private List<string> lines;
         private RenderTarget2D renderTarget;
+        /// <summary>
+        /// Constructs a new TextSprite.
+        /// </summary>
         public TextSprite(
             string text,
             SpriteFont font,
@@ -251,6 +258,10 @@ namespace FCSG{
         }
 
         public override void Draw(bool drawMiddle=true){
+            BasicDraw(this.spriteBatch,drawMiddle);
+        }
+        public override void BasicDraw(SpriteBatch spriteBatch, bool drawMiddle = true)
+        {
             if(draw){
                 //Console.WriteLine("Outside of a sprite resize: w="+midWidth+"/"+width+" h="+midHeight+"/"+height);
                 if(drawMiddle==true){

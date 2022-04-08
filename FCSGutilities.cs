@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using System.Collections;
+using System;
 
 namespace FCSG{
     public delegate void TypeAction<Type>(Type type);
@@ -36,7 +37,7 @@ namespace FCSG{
     public class Utilities{
 
         /// <summary>
-        /// Draws the given Object2Ds on the target
+        /// Draws the given Object2Ds on the target.
         /// </summary>
         public static void DrawOntoTarget(RenderTarget2D renderTarget, ObjectGroup<Object2D> group, SpriteBatch spriteBatch){
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
@@ -50,7 +51,7 @@ namespace FCSG{
             spriteBatch.GraphicsDevice.SetRenderTarget(null);
         }
         /// <summary>
-        /// Draws the given sprite on the target
+        /// Draws the given sprite on the target.
         /// </summary>
         public static void DrawOntoTarget(RenderTarget2D renderTarget, SpriteObject spriteObject, SpriteBatch spriteBatch){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
@@ -96,6 +97,23 @@ namespace FCSG{
             spriteBatch.GraphicsDevice.SetRenderTarget(null);
         }
 
+        /// <summary>
+        /// Draws the given sprites on the target. In order to draw, it uses each sprite's BasicDraw function, leaving the rest to the batch settings.
+        /// </summary>
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, LayerGroup sprites, SpriteBatch spriteBatch){
+            spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
+            spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
+            spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
+
+            spriteBatch.Begin(sortMode:SpriteSortMode.FrontToBack,samplerState:SamplerState.PointClamp);
+            foreach(SpriteBase sprite in sprites.objects){
+                sprite.BasicDraw(spriteBatch, drawMiddle:false);
+            }
+            spriteBatch.End();
+
+            spriteBatch.GraphicsDevice.SetRenderTarget(null);
+        }
+
         public static Texture2D CombineTextures(List<Texture2D> textures, SpriteBatch spriteBatch){
             if(textures.Count==0){
                 throw new System.ArgumentException("The list of textures is empty");
@@ -124,7 +142,7 @@ namespace FCSG{
     /// A class which stores sprites in a list, keeping them ordered by their depth, with the ones with higher values in front
     /// </summary>
     public class LayerGroup{
-        public List<SpriteBase> objects; //TODO: decide if this should be private or not
+        public List<SpriteBase> objects; //TODO: decide if this should be private or not->I'd say it should not
         public LayerGroup(){
             objects=new List<SpriteBase>();
         }
@@ -139,7 +157,12 @@ namespace FCSG{
                 for(i=objects.Count; i>0 && objects[i-1].depth<sprite.depth; i--){
                     objects.Insert(i,objects[i-1]);
                 }
-                objects[i]=sprite;
+                if(objects.Count==i){ //This covers the edge case in which the index of the object which should be added is out of bounds.
+                    objects.Add(sprite);
+                }
+                else{
+                    objects[i]=sprite;
+                }
             }
         }
 
@@ -160,25 +183,54 @@ namespace FCSG{
     }
 
     /// <summary>
-    /// A class made to make it easier to set clicks configurations for a sprite
+    /// A class used to simply generate textures composed of many different sprites.
     /// </summary>
-    public class ClickConfig{
-        private bool left;
-        private bool right;
-        private bool middle;
-        private bool wheel;
-        private bool hover;
-
-        public ClickConfig(bool left=false, bool middle=false, bool right=false, bool wheel=false, bool hover=false){
-            this.left=left;
-            this.middle=middle;
-            this.right=right;
-            this.wheel=wheel;
-            this.hover=hover;
+    public class TextureGenerator{
+        public LayerGroup sprites;
+        private GraphicsDevice graphicsDevice;
+        private SpriteBatch spriteBatch;
+        public int x;
+        public int y;
+        public TextureGenerator(GraphicsDevice graphicsDevice){
+            sprites=new LayerGroup();
+            this.graphicsDevice=graphicsDevice;
+            this.x=100;
+            this.y=100;
+        }
+        /// <param name="sprites">A layer group containing the sprites which will be drawn on the texture</param>
+        /// <param name="x">The width of the result texture</param>
+        /// <param name="y">The height of the result texture</param>
+        /// <summary>
+        /// Construct a texture generator which will automatically generate a new SpriteBatch from its GraphicsDevice
+        /// </summary>
+        public TextureGenerator(GraphicsDevice graphicsDevice, LayerGroup sprites, int x, int y){
+            this.graphicsDevice=graphicsDevice;
+            this.sprites=sprites;
+            this.x=x;
+            this.y=y;
         }
 
-        public bool[] toArray(){
-            return new bool[]{left,middle,right,wheel,hover};
+        /// <param name="sprites">A layer group containing the sprites which will be drawn on the texture</param>
+        /// <param name="x">The width of the result texture</param>
+        /// <param name="y">The height of the result texture</param>
+        /// <summary>
+        /// Construct a texture generator which will use the given SpriteBatch
+        /// </summary>
+        public TextureGenerator(GraphicsDevice graphicsDevice, LayerGroup sprites, int x, int y, SpriteBatch spriteBatch){
+            this.graphicsDevice=graphicsDevice;
+            this.sprites=sprites;
+            this.x=x;
+            this.y=y;
+            this.spriteBatch=spriteBatch;
+        }
+        public Texture2D Generate(){
+            SpriteBatch spriteBatch=this.spriteBatch;
+            if(spriteBatch==null){
+                spriteBatch=new SpriteBatch(graphicsDevice);
+            }
+            RenderTarget2D renderTarget=new RenderTarget2D(graphicsDevice, x, y);
+            Utilities.DrawOntoTarget(renderTarget, sprites, spriteBatch);
+            return renderTarget;
         }
     }
 }

@@ -12,6 +12,7 @@ namespace MonogameTests
         bool left_held=false;
         bool middle_held=false;
         bool right_held=false;
+        Dictionary<string, SpriteBase> spriteDict;
         Texture2D totem_of_time;
         Texture2D red;
         Texture2D blue;
@@ -19,6 +20,7 @@ namespace MonogameTests
 
         TextSprite texto;
         Sprite randomSprite;
+        Sprite colorSprite; //Should make a dictionary
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -49,6 +51,7 @@ namespace MonogameTests
 
         protected override void LoadContent()
         {
+            spriteDict = new Dictionary<string, SpriteBase>();
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             wrapper=new Wrapper(_spriteBatch);
@@ -56,26 +59,80 @@ namespace MonogameTests
             totem_of_time=Content.Load<Texture2D>("assets/totem_of_time");
             red=Content.Load<Texture2D>("red");
             blue=Content.Load<Texture2D>("blue");
+            Texture2D white=Content.Load<Texture2D>("white");
+            Texture2D whiteframe=Content.Load<Texture2D>("whiteframe");
             Texture2D redl=Content.Load<Texture2D>("redl");
             font=Content.Load<SpriteFont>("FreeSans");
 
             group=new ObjectGroup<SpriteObject>();
 
+            colorSprite=new Sprite(
+                spriteBatch:_spriteBatch,
+                texture:whiteframe,
+                depth:0.5f,
+                x:200,
+                y:0,
+                width:100,
+                height:100,
+                color: new Color(0,255,0,255)
+            );
+            //wrapper.Add(colorSprite);
+
+            LayerGroup group2=new LayerGroup();
+
+            int x_chess=8;
+            int y_chess=8;
+            RenderTarget2D chessThing=new RenderTarget2D(GraphicsDevice,16*x_chess,16*y_chess);
+            for(int i=0; i<x_chess;i++){
+                for(int j=0; j<y_chess;j++){
+                    Color thisColor=new Color(0,255,255,255);
+                    if((i+j)%2==0){
+                        thisColor=new Color(255,0,0,255);
+                    }
+                    //Console.WriteLine("Adding "+i+","+j);
+                    group2.Add(new Sprite(
+                        spriteBatch:_spriteBatch,
+                        texture:whiteframe,
+                        depth:0.5f,
+                        x:i*16,
+                        y:j*16,
+                        width:16,
+                        height:16,
+                        color: thisColor
+                    ));
+                }
+            }
+
+            TextureGenerator chessTextureGenerator=new TextureGenerator(GraphicsDevice,group2,16*x_chess,16*y_chess,_spriteBatch);
+
+            wrapper.Add(new Sprite(
+                spriteBatch:_spriteBatch,
+                texture:chessTextureGenerator.Generate(),
+                depth:0.1f,
+                xDelegate:(SpriteObject so)=>(GraphicsDevice.Viewport.Width-Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height))/2,
+                y:0,
+                widthDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),
+                heightDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)
+            ));
+
             // Example of surface-draw->way to create new 2d texture
-            Methods.createGrid(100,100,blue,GraphicsDevice,spriteGroup:group,_spriteBatch);
-            RenderTarget2D renderTarget=new RenderTarget2D(GraphicsDevice,2000,2000);
-            Utilities.DrawOntoTarget(renderTarget,new ObjectGroup<Object2D>(group.objects.ConvertAll<Object2D>(x=>(Object2D)x)),_spriteBatch);
+            // Methods.createGrid(100,100,blue,GraphicsDevice,spriteGroup:group,_spriteBatch);
+            // RenderTarget2D renderTarget=new RenderTarget2D(GraphicsDevice,2000,2000);
+            // Utilities.DrawOntoTarget(renderTarget,new ObjectGroup<Object2D>(group.objects.ConvertAll<Object2D>(x=>(Object2D)x)),_spriteBatch);
             
             //randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
-            randomSprite=wrapper.NewSprite(red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y,leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
-                if(randomSprite.texture==red){
-                    randomSprite.texture=blue;
-                }else{
-                    randomSprite.texture=red;
-                }
-                return true;
-            }
+            randomSprite=new Sprite(_spriteBatch,red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y,leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
+                    if(randomSprite.texture==red){
+                        randomSprite.texture=blue;
+                    }else{
+                        randomSprite.texture=red;
+                    }
+                    return true;
+                }, 
+                spritesDict: spriteDict,
+                dictKey:"bigSquare"
             );
+            wrapper.Add(randomSprite);
 
             texto=new TextSprite("",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f);
             //TextSprite texto=new TextSprite("AaaaaaaaaaaaaaaaAAAAAAAAAAAAAaaaaaaaaaaaaaaaAAAaaaa",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>400,heightDelegate:(SpriteObject sprite)=>400,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>1000);
@@ -85,14 +142,14 @@ namespace MonogameTests
             //wrapper.NewSprite(blue,width:100,height:100,xDelegate:(SpriteObject sprite)=>x);
             //wrapper.NewSprite(blue,width:100,height:100,x:100,y:50);
 
-            LayerGroup layerGroup=new LayerGroup();
-            layerGroup.Add(randomSprite);
-            layerGroup.Add(texto);
-            layerGroup.Add(wrapper.NewSprite(blue,width:100,height:100,depth:0.5f));
-            layerGroup.Add(wrapper.NewSprite(red,width:100,height:100,x:100,y:50,depth:0.5f));
-            foreach(SpriteBase sprite in layerGroup.objects){
-                Console.WriteLine("depth: "+sprite.depth);
-            }
+            // LayerGroup layerGroup=new LayerGroup();
+            // layerGroup.Add(randomSprite);
+            // layerGroup.Add(texto);
+            // layerGroup.Add(wrapper.NewSprite(blue,width:100,height:100,depth:0.5f));
+            // layerGroup.Add(wrapper.NewSprite(red,width:100,height:100,x:100,y:50,depth:0.5f));
+            // foreach(SpriteBase sprite in layerGroup.objects){
+            //     Console.WriteLine("depth: "+sprite.depth);
+            // }
 
             clock=new GameClock();
             
@@ -126,12 +183,24 @@ namespace MonogameTests
                 y=y+1;
             }
             if(Keyboard.GetState().IsKeyDown(Keys.L)){
-                randomSprite.Remove();
+                //randomSprite.Remove();
+                spriteDict["bigSquare"].draw=false;
+            }
+            else if(Keyboard.GetState().IsKeyDown(Keys.K)){
+                spriteDict["bigSquare"].draw=true;
             }
             if(Keyboard.GetState().IsKeyDown(Keys.Down)){
-                texto.offsetY+=10;
+                //texto.offsetY+=10;
+                if(colorSprite.color.G>0){
+                    colorSprite.color.G=(byte)(colorSprite.color.G-1);
+                    colorSprite.color.B=(byte)(255-colorSprite.color.G);
+                }
             }else if(Keyboard.GetState().IsKeyDown(Keys.Up)){
-                texto.offsetY-=10;
+                //texto.offsetY-=10;
+                if(colorSprite.color.G<255){
+                    colorSprite.color.G=(byte)(colorSprite.color.G+1);
+                    colorSprite.color.B=(byte)(255-colorSprite.color.G);
+                }
             }
 
             //TODO: add an input controller to check if mouse was just pressed or is being held down.
@@ -140,11 +209,11 @@ namespace MonogameTests
                 left_held=true;
             }
             if(left_held && Mouse.GetState().LeftButton==ButtonState.Released){
-                Console.WriteLine("Released");
+                // Console.WriteLine("Released");
                 left_held=false;
             }
             if(Mouse.GetState().ScrollWheelValue!=0){
-                Console.WriteLine("Mouse scroll: "+Mouse.GetState().ScrollWheelValue);
+                // Console.WriteLine("Mouse scroll: "+Mouse.GetState().ScrollWheelValue);
             }
 
             base.Update(gameTime);
