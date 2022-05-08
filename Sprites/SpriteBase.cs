@@ -29,12 +29,12 @@ namespace FCSG{
                 get{return widthDelegate(this);}
                 set{widthDelegate=(SpriteObject sprite)=>value;}
             }
-            protected int midWidth{get;set;}
+            protected int midWidth{get;set;} //Used to know wether the middle texture should be redrawn or not
             public int height{
                 get{return heightDelegate(this);}
                 set{heightDelegate=(SpriteObject sprite)=>value;}
             }
-            protected int midHeight{get;set;}
+            protected int midHeight{get;set;} //Used to know wether the middle texture should be redrawn or not
         public Texture2D texture{get;set;}
         protected Texture2D middleTexture;
         public Color color; //Used when the sprite is drawn
@@ -51,6 +51,8 @@ namespace FCSG{
             public ClickDelegate rightClickDelegate;
             public ClickDelegate wheelHoverDelegate;
             public ClickDelegate hoverDelegate;
+
+        protected CollisionRectangle collisionRectangle; //A rectangle used for collision detection. its coordinates are relative to the sprite's position, and so is the size.
         #endregion Fields
         #region Constructors
         /// <param name="depth">The depth of the sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0.</param>
@@ -93,7 +95,8 @@ namespace FCSG{
             ClickDelegate wheelHoverDelegate=null,
             ClickDelegate hoverDelegate=null,
             Dictionary<string, SpriteBase> spritesDict=null,
-            string dictKey=null
+            string dictKey=null,
+            CollisionRectangle collisionRectangle=null
         ){
             this.spriteBatch = spriteBatch;
 
@@ -128,7 +131,7 @@ namespace FCSG{
                     this.widthDelegate = widthDelegate;
                 else
                     this.widthDelegate = (SpriteObject sprite) => 100;
-                midWidth = -1;
+                midWidth = -1; //FIXME: DON'T DELETE THIS VALUE WHEN REWRITING WITH SPRITEPARAMETERS
                 
                 if(height!=null){
                     this.heightDelegate=(SpriteObject sprite)=>(int)height;
@@ -137,7 +140,7 @@ namespace FCSG{
                     this.heightDelegate = heightDelegate;
                 else
                     this.heightDelegate = (SpriteObject sprite) => 100;
-                midHeight = -1;
+                midHeight = -1; //FIXME: DON'T DELETE THIS VALUE WHEN REWRITING WITH SPRITEPARAMETERS
 
             if(rotation!=null){ //Sets the rotation of the sprite
                 this.rotation = (float)rotation;
@@ -156,7 +159,8 @@ namespace FCSG{
             }else{
                 this.color = Color.White;
             }
-            this.draw=true;
+
+            this.draw=true; //TODO: should this even be here?->DO NOT DELETE THIS VALUE WHEN REWRITING WITH SPRITEPARAMETERS
 
             this.groups=new List<ObjectGroup<SpriteObject>>();
             if(group!=null){ //Adds the sprite to the group
@@ -183,6 +187,15 @@ namespace FCSG{
                 this.rightClickDelegate = rightClickDelegate;
                 this.wheelHoverDelegate = wheelHoverDelegate;
                 this.hoverDelegate = hoverDelegate;
+
+            //Collision rectangle
+            if(collisionRectangle==null){
+                this.collisionRectangle = new CollisionRectangle(this);
+            }else{
+                this.collisionRectangle = collisionRectangle;
+            }
+
+            //Add to wrapper
             if(wrapper!=null){
                 wrapper.Add(this);
             }
@@ -227,45 +240,43 @@ namespace FCSG{
 
         //TODO: make a method which takes a rectangle class to check collisions, so that it is more linear and compatible with actual game objects
         public bool CollidesWith(int x, int y){
-            if(x>=this.x && x<=this.x+width && y>=this.y && y<=this.y+height){
-                return true;
-            }
-            return false;
+            return collisionRectangle.CollidesWith(x,y); //This uses the collision rectangle to check collisions, so that delegates can be used.
         }
 
         ///<summary>
         ///Checks if the sprite is colliding with another sprite and triggers the right click delegate.
         ///</summary>
-        public void Clicked(int x, int y, Clicks clickType){
+        public bool Clicked(int x, int y, Clicks clickType){
             if(this.CollidesWith(x,y)){
                 switch(clickType){
                     case Clicks.Left:
                         if(leftClickDelegate!=null){
-                            leftClickDelegate(this,x,y);
+                            return leftClickDelegate(this,x,y);
                         }
-                        break;
+                        return true;
                     case Clicks.Middle:
                         if(middleClickDelegate!=null){
-                            middleClickDelegate(this,x,y);
+                            return middleClickDelegate(this,x,y);
                         }
-                        break;
+                        return true;
                     case Clicks.Right:
                         if(rightClickDelegate!=null){
-                            rightClickDelegate(this,x,y);
+                            return rightClickDelegate(this,x,y);
                         }
-                        break;
+                        return true;
                     case Clicks.WheelHover:
                         if(wheelHoverDelegate!=null){
-                            wheelHoverDelegate(this,x,y);
+                            return wheelHoverDelegate(this,x,y);
                         }
-                        break;
+                        return true;
                     case Clicks.Hover:
                         if(hoverDelegate!=null){
-                            hoverDelegate(this,x,y);
+                            return hoverDelegate(this,x,y);
                         }
-                        break;
+                        return true;
                 }
             }
+            return true;
         }
     }
 }

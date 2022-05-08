@@ -80,14 +80,14 @@ namespace MonogameTests
 
             LayerGroup group2=new LayerGroup();
 
-            int x_chess=8;
-            int y_chess=8;
+            int x_chess=10;
+            int y_chess=10;
             RenderTarget2D chessThing=new RenderTarget2D(GraphicsDevice,16*x_chess,16*y_chess);
             for(int i=0; i<x_chess;i++){
                 for(int j=0; j<y_chess;j++){
                     Color thisColor=new Color(0,255,255,255);
                     if((i+j)%2==0){
-                        thisColor=new Color(255,0,0,255);
+                        thisColor=new Color(0,0,255,255);
                     }
                     //Console.WriteLine("Adding "+i+","+j);
                     group2.Add(new Sprite(
@@ -112,7 +112,22 @@ namespace MonogameTests
                 xDelegate:(SpriteObject so)=>(GraphicsDevice.Viewport.Width-Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height))/2,
                 y:0,
                 widthDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),
-                heightDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)
+                heightDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),
+                spritesDict: spriteDict,
+                dictKey: "chess",
+                leftClickDelegate: (SpriteBase sb, int x, int y)=>false
+            ));
+
+            int x_pos=3;
+            int y_pos=3;
+            wrapper.Add(new Sprite(
+                spriteBatch:_spriteBatch,
+                texture:white,
+                depth:0.11f,
+                xDelegate:(SpriteObject so)=>(int)Math.Round((double)(spriteDict["chess"].x+((((double)spriteDict["chess"].width)/(double)x_chess)*x_pos))),
+                yDelegate:(SpriteObject so)=>(int)Math.Round((double)(spriteDict["chess"].height+spriteDict["chess"].y-so.height-((((double)spriteDict["chess"].width)/(double)x_chess)*y_pos))),
+                widthDelegate:(SpriteObject so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)x_chess),
+                heightDelegate:(SpriteObject so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)y_chess)
             ));
 
             // Example of surface-draw->way to create new 2d texture

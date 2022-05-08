@@ -139,13 +139,28 @@ namespace FCSG{
     }
 
     /// <summary>
-    /// A class which stores sprites in a list, keeping them ordered by their depth, with the ones with higher values in front
+    /// A class which stores sprites in a list, keeping them ordered by their depth or by a custom delegate, with the ones with higher values in front
     /// </summary>
     public class LayerGroup{
         public List<SpriteBase> objects; //TODO: decide if this should be private or not->I'd say it should not
+        private DoubleSpriteBaseDelegate comparer;
+        /// <summary>
+        /// Construct a new LayerGroup which will sort its sprites by their depth
+        /// </summary>
         public LayerGroup(){
             objects=new List<SpriteBase>();
+            comparer=(SpriteBase sb)=>sb.depth;
         }
+        /// <summary>
+        /// Construct a new LayerGroup which will sort its sprites by the given delegate
+        /// </summary>
+        public LayerGroup(DoubleSpriteBaseDelegate comparer){
+            objects=new List<SpriteBase>();
+            this.comparer=comparer;
+        }
+        /// <summary>
+        /// Adds the given sprite to the LayerGroup, keeping it ordered by its depth
+        /// </summary>
         public void Add(SpriteBase sprite){
             this.Add(sprite,this.objects);
         }
@@ -154,7 +169,7 @@ namespace FCSG{
                 objects.Add(sprite);
             }else{
                 int i=0;
-                for(i=objects.Count; i>0 && objects[i-1].depth<sprite.depth; i--){
+                for(i=objects.Count; i>0 && comparer(objects[i-1])<comparer(sprite); i--){
                     objects.Insert(i,objects[i-1]);
                 }
                 if(objects.Count==i){ //This covers the edge case in which the index of the object which should be added is out of bounds.
@@ -166,6 +181,9 @@ namespace FCSG{
             }
         }
 
+        /// <summary>
+        /// Removes the given sprite from the LayerGroup
+        /// </summary>
         public void Remove(SpriteBase sprite){
             objects.Remove(sprite);
         }
@@ -232,5 +250,239 @@ namespace FCSG{
             Utilities.DrawOntoTarget(renderTarget, sprites, spriteBatch);
             return renderTarget;
         }
+
+        public void Add(SpriteBase sprite){
+            sprites.Add(sprite);
+        }
+        public void Remove(SpriteBase sprite){
+            sprites.Remove(sprite);
+        }
+    }
+
+    /// <summary>
+    /// A class which represents a sprite's collision box. It was created so that delegates can be used to handle collisions. It can cast implicitly to a rectangle.
+    /// </summary>
+    public class CollisionRectangle{
+        private IntSpriteBaseDelegate xDelegate;
+        private IntSpriteBaseDelegate yDelegate;
+        private IntSpriteBaseDelegate widthDelegate;
+        private IntSpriteBaseDelegate heightDelegate;
+        private SpriteBase sprite; //The sprite which this collision rectangle is associated with
+
+        public int x{
+            get{
+                return xDelegate(sprite);
+            }
+        }
+        public int y{
+            get{
+                return yDelegate(sprite);
+            }
+        }
+        public int width{
+            get{
+                return widthDelegate(sprite);
+            }
+        }
+        public int height{
+            get{
+                return heightDelegate(sprite);
+            }
+        }
+
+        public CollisionRectangle(SpriteBase sprite, IntSpriteBaseDelegate xDelegate, IntSpriteBaseDelegate yDelegate, IntSpriteBaseDelegate widthDelegate, IntSpriteBaseDelegate heightDelegate){
+            this.sprite=sprite;
+            this.xDelegate=xDelegate;
+            this.yDelegate=yDelegate;
+            this.widthDelegate=widthDelegate;
+            this.heightDelegate=heightDelegate;
+        }
+        public CollisionRectangle(IntSpriteBaseDelegate xDelegate, IntSpriteBaseDelegate yDelegate, IntSpriteBaseDelegate widthDelegate, IntSpriteBaseDelegate heightDelegate){
+            this.xDelegate=xDelegate;
+            this.yDelegate=yDelegate;
+            this.widthDelegate=widthDelegate;
+            this.heightDelegate=heightDelegate;
+        }
+        /// <summary>
+        /// Construct a collision rectangle with values corresponding to the ones of the sprite.
+        /// </summary>
+        public CollisionRectangle(SpriteBase sprite){
+            this.sprite=sprite;
+            this.xDelegate=(SpriteBase sprite)=>sprite.x; //TODO: add a way to choose wether the coords are relative or not to the sprite.
+            this.yDelegate=(SpriteBase sprite)=>sprite.y;
+            this.widthDelegate=(SpriteBase sprite)=>sprite.width;
+            this.heightDelegate=(SpriteBase sprite)=>sprite.height;
+        }
+
+        public void SetSprite(SpriteBase sprite){
+            this.sprite=sprite;
+        }
+
+        /// <summary>
+        /// Returns true if the given point is inside the collision rectangle.
+        /// </summary>
+        public bool CollidesWith(int x,int y){
+            return x>=this.x && x<=this.x+this.width && y>=this.y && y<=this.y+this.height;
+        }
+
+        public static implicit operator Rectangle(CollisionRectangle collisionRectangle){
+            return new Rectangle(collisionRectangle.x, collisionRectangle.y, collisionRectangle.width, collisionRectangle.height);
+        }
+    }
+
+    public class SpriteParameters{
+        #region Fields
+        public SpriteBatch spriteBatch;
+        public Texture2D texture;
+        public SpriteFont font;
+        public string text;
+        public TextSprite.WrapMode wrapMode;
+        public TextSprite.LayoutMode LayoutMode;
+        public int offsetX; //Only for TextSprite
+        public int offsetY; //Only for TextSprite
+        public IntSpriteObjDelegate originalWidthDelegate; //Only for TextSprite
+        public IntSpriteObjDelegate originalHeightDelegate; //Only for TextSprite
+        public Wrapper wrapper;
+        public float? depth;
+        public IntSpriteObjDelegate xDelegate;
+        public int? x;
+        public IntSpriteObjDelegate yDelegate;
+        public int? y;
+        public IntSpriteObjDelegate widthDelegate;
+        public int? width;
+        public IntSpriteObjDelegate heightDelegate;
+        public int? height;
+        public float? rotation; 
+        public Vector2? origin; 
+        public Color? color;
+        public ObjectGroup<SpriteObject> group;
+        public List<ObjectGroup<SpriteObject>> groups;
+        public ClickDelegate leftClickDelegate;
+        public ClickDelegate middleClickDelegate;
+        public ClickDelegate rightClickDelegate;
+        public ClickDelegate wheelHoverDelegate;
+        public ClickDelegate hoverDelegate;
+        public Dictionary<string, SpriteBase> spritesDict;
+        public string dictKey;
+        public CollisionRectangle collisionRectangle;
+
+        #endregion Fields
+        #region Constructor
+        public SpriteParameters(
+            SpriteBatch spriteBatch,
+            Texture2D texture=null, //Only for Sprite
+            SpriteFont font=null, //Only for TextSprite
+            string text=null, //Only for TextSprite
+            TextSprite.WrapMode wrapMode=TextSprite.WrapMode.Word, //Only for TextSprite
+            TextSprite.LayoutMode layoutMode=TextSprite.LayoutMode.Left, //Only for TextSprite
+            int offsetX=0, //Only for TextSprite
+            int offsetY=0, //Only for TextSprite
+            IntSpriteObjDelegate originalWidthDelegate=null, //Only for TextSprite
+            IntSpriteObjDelegate originalHeightDelegate=null, //Only for TextSprite
+            Wrapper wrapper=null,
+            float depth=0, 
+            IntSpriteObjDelegate xDelegate=null, 
+            int? x=null,
+            IntSpriteObjDelegate yDelegate=null,
+            int? y=null,
+            IntSpriteObjDelegate widthDelegate=null, 
+            int? width=null,
+            IntSpriteObjDelegate heightDelegate=null,
+            int? height=null,
+            float rotation=0, 
+            Vector2? origin=null, 
+            Color? color=null,
+            ObjectGroup<SpriteObject> group=null,
+            List<ObjectGroup<SpriteObject>> groups=null,
+            ClickDelegate leftClickDelegate=null,
+            ClickDelegate middleClickDelegate=null,
+            ClickDelegate rightClickDelegate=null,
+            ClickDelegate wheelHoverDelegate=null,
+            ClickDelegate hoverDelegate=null,
+            Dictionary<string, SpriteBase> spritesDict=null,
+            string dictKey=null,
+            CollisionRectangle collisionRectangle=null
+        ){
+            //Variables which are not modified by default
+            this.spriteBatch=spriteBatch;
+            this.texture=texture;
+            this.font=font;
+            this.text=text;
+            this.wrapMode=wrapMode;
+            this.LayoutMode=layoutMode;
+            this.offsetX=offsetX;
+            this.offsetY=offsetY;
+            this.originalWidthDelegate=originalWidthDelegate;
+            this.originalHeightDelegate=originalHeightDelegate;
+            this.wrapper=wrapper;
+            this.depth=depth;
+            this.x=x;
+            this.y=y;
+            this.width=width;
+            this.height=height;
+            this.rotation=rotation;
+            this.origin=origin;
+            this.color=color;
+            this.group=group;
+            this.groups=groups;
+            this.spritesDict=spritesDict;
+            this.dictKey=dictKey;
+            this.collisionRectangle=collisionRectangle;
+
+            //Position delegates
+                if(x!=null){
+                    this.xDelegate=(SpriteObject sprite)=>(int)x;
+                }
+                else if(xDelegate != null)
+                    this.xDelegate = xDelegate;
+                else
+                    this.xDelegate = (SpriteObject sprite) => 0;
+                if(y!=null){
+                    this.yDelegate=(SpriteObject sprite)=>(int)y;
+                }
+                else if(yDelegate != null)
+                    this.yDelegate = yDelegate;
+                else
+                    this.yDelegate = (SpriteObject sprite) => 0;
+
+            //Size delegates
+                if(width!=null){
+                    this.widthDelegate=(SpriteObject sprite)=>(int)width;
+                }
+                else if(widthDelegate!=null)
+                    this.widthDelegate = widthDelegate;
+                else
+                    this.widthDelegate = (SpriteObject sprite) => 100;
+                
+                if(height!=null){
+                    this.heightDelegate=(SpriteObject sprite)=>(int)height;
+                }
+                else if(heightDelegate!=null)
+                    this.heightDelegate = heightDelegate;
+                else
+                    this.heightDelegate = (SpriteObject sprite) => 100;
+
+            //Click delegates
+                this.leftClickDelegate = leftClickDelegate;
+                this.middleClickDelegate = middleClickDelegate;
+                this.rightClickDelegate = rightClickDelegate;
+                this.wheelHoverDelegate = wheelHoverDelegate;
+                this.hoverDelegate = hoverDelegate;
+
+            //Origin
+            if(origin!=null){
+                this.origin = (Vector2)origin;
+            }else{
+                this.origin = new Vector2(0,0);
+            }
+
+            //Color
+            if(color!=null){
+                this.color = (Color)color;
+            }else{
+                this.color = Color.White;
+            }
+        }
+        #endregion Constructor
     }
 }

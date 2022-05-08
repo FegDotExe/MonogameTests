@@ -116,8 +116,12 @@ namespace FCSG{
                     layers=hover.objects;
                     break;
             }
+            bool nextElement=true;
             foreach(SpriteBase sprite in layers){
-                sprite.Clicked(x,y,click); //Everything should be correctly handled in each sprite
+                nextElement=sprite.Clicked(x,y,click); //Everything should be correctly handled in each sprite
+                if(!nextElement){
+                    break;
+                }
             }
         }
     }

@@ -1,8 +1,11 @@
 //Home to all the random methods and classes that are used in the FCSG namespace.
 
 namespace FCSG{
+    public delegate int IntSpriteBaseDelegate(SpriteBase sprite);
     public delegate int IntSpriteDelegate(Sprite sprite);
     public delegate int IntSpriteObjDelegate(SpriteObject sprite);
+
+    public delegate double DoubleSpriteBaseDelegate(SpriteBase sprite);
 
     ///<summary>
     ///A delegate used for click events. It returns true if the click should go on and look for the other clicks.
