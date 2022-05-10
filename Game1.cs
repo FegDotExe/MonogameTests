@@ -67,15 +67,23 @@ namespace MonogameTests
             group=new ObjectGroup<SpriteObject>();
 
             colorSprite=new Sprite(
-                spriteBatch:_spriteBatch,
+                new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:whiteframe,
                 depth:0.5f,
                 x:200,
                 y:0,
                 width:100,
                 height:100,
-                color: new Color(0,255,0,255)
+                color: new Color(0,255,0,255))
             );
+
+            SVariable sVariableTest=new SVariable(colorSprite, (SpriteBase sb)=>"A");
+            SVariable sVb=new SVariable(colorSprite, (SpriteBase sb)=>sVariableTest+"B", new SVariable[] {sVariableTest});
+            SVariable sVc=new SVariable(colorSprite, (SpriteBase sb)=>sVariableTest+"C", new SVariable[] {sVariableTest});
+            SVariable sVd=new SVariable(colorSprite, (SpriteBase sb)=>(string)sVariableTest+sVb+sVc+"D", new SVariable[] {sVariableTest,sVb,sVc});
+            SVariable sVe=new SVariable(colorSprite, (SpriteBase sb)=>sVb+"E", new SVariable[] {sVb});
+            sVariableTest.Set("X");
+
             //wrapper.Add(colorSprite);
 
             LayerGroup group2=new LayerGroup();
@@ -91,14 +99,14 @@ namespace MonogameTests
                     }
                     //Console.WriteLine("Adding "+i+","+j);
                     group2.Add(new Sprite(
-                        spriteBatch:_spriteBatch,
+                        new SpriteParameters(spriteBatch:_spriteBatch,
                         texture:whiteframe,
                         depth:0.5f,
                         x:i*16,
                         y:j*16,
                         width:16,
                         height:16,
-                        color: thisColor
+                        color: thisColor)
                     ));
                 }
             }
@@ -106,7 +114,7 @@ namespace MonogameTests
             TextureGenerator chessTextureGenerator=new TextureGenerator(GraphicsDevice,group2,16*x_chess,16*y_chess,_spriteBatch);
 
             wrapper.Add(new Sprite(
-                spriteBatch:_spriteBatch,
+                new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:chessTextureGenerator.Generate(),
                 depth:0.1f,
                 xDelegate:(SpriteObject so)=>(GraphicsDevice.Viewport.Width-Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height))/2,
@@ -115,19 +123,19 @@ namespace MonogameTests
                 heightDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),
                 spritesDict: spriteDict,
                 dictKey: "chess",
-                leftClickDelegate: (SpriteBase sb, int x, int y)=>false
+                leftClickDelegate: (SpriteBase sb, int x, int y)=>false)
             ));
 
             int x_pos=3;
             int y_pos=3;
             wrapper.Add(new Sprite(
-                spriteBatch:_spriteBatch,
+                new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:white,
                 depth:0.11f,
                 xDelegate:(SpriteObject so)=>(int)Math.Round((double)(spriteDict["chess"].x+((((double)spriteDict["chess"].width)/(double)x_chess)*x_pos))),
                 yDelegate:(SpriteObject so)=>(int)Math.Round((double)(spriteDict["chess"].height+spriteDict["chess"].y-so.height-((((double)spriteDict["chess"].width)/(double)x_chess)*y_pos))),
                 widthDelegate:(SpriteObject so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)x_chess),
-                heightDelegate:(SpriteObject so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)y_chess)
+                heightDelegate:(SpriteObject so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)y_chess))
             ));
 
             // Example of surface-draw->way to create new 2d texture
@@ -136,7 +144,7 @@ namespace MonogameTests
             // Utilities.DrawOntoTarget(renderTarget,new ObjectGroup<Object2D>(group.objects.ConvertAll<Object2D>(x=>(Object2D)x)),_spriteBatch);
             
             //randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
-            randomSprite=new Sprite(_spriteBatch,red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y,leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
+            randomSprite=new Sprite(new SpriteParameters(_spriteBatch,red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y,leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
                     if(randomSprite.texture==red){
                         randomSprite.texture=blue;
                     }else{
@@ -145,11 +153,13 @@ namespace MonogameTests
                     return true;
                 }, 
                 spritesDict: spriteDict,
-                dictKey:"bigSquare"
+                dictKey:"bigSquare")
             );
             wrapper.Add(randomSprite);
 
-            texto=new TextSprite("",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f);
+            texto=new TextSprite(
+                new SpriteParameters(text:"",font:font,spriteBatch:_spriteBatch,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f)
+            );
             //TextSprite texto=new TextSprite("AaaaaaaaaaaaaaaaAAAAAAAAAAAAAaaaaaaaaaaaaaaaAAAaaaa",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>400,heightDelegate:(SpriteObject sprite)=>400,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>1000);
             // wrapper.NewSprite(texto.texture,depth:1f,widthDelegate:(Sprite sprite)=>400,heightDelegate:(Sprite sprite)=>800);
             wrapper.Add(texto);
@@ -294,14 +304,14 @@ namespace MonogameTests
                 for(int j=0;j<ySize;j++){
                     int copyY=j;
                     new Sprite(
-                        spriteBatch,
+                        new SpriteParameters(spriteBatch,
                         texture,
                         depth:0f,
                         xDelegate: (SpriteObject sprite)=>(copyX*(graphicsDevice.Viewport.Width/DIVIDER)), 
                         yDelegate: (SpriteObject sprite)=>(copyY*(graphicsDevice.Viewport.Width/DIVIDER)), 
                         widthDelegate: (SpriteObject sprite)=>graphicsDevice.Viewport.Width/DIVIDER, 
                         heightDelegate: (SpriteObject sprite)=>graphicsDevice.Viewport.Width/DIVIDER,
-                        group:spriteGroup
+                        group:spriteGroup)
                     );
                 }
             }

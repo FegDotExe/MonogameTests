@@ -71,62 +71,25 @@ namespace FCSG{
         /// Constructs a new TextSprite.
         /// </summary>
         public TextSprite(
-            string text,
-            SpriteFont font,
-            SpriteBatch spriteBatch,
-            Wrapper wrapper=null,
-            WrapMode wrapMode=WrapMode.Word,
-            LayoutMode layoutMode=LayoutMode.Left,
-            int offsetX=0,
-            int offsetY=0,
-            float? depth=null,
-            IntSpriteObjDelegate originalWidthDelegate=null,
-            IntSpriteObjDelegate originalHeightDelegate=null,
-            IntSpriteObjDelegate xDelegate=null, 
-            int? x=null,
-            IntSpriteObjDelegate yDelegate=null,
-            int? y=null,
-            IntSpriteObjDelegate widthDelegate=null, 
-            int? width=null,
-            IntSpriteObjDelegate heightDelegate=null,
-            int? height=null,
-            float? rotation=null, 
-            Vector2? origin=null, 
-            Color? color=null,
-            ObjectGroup<SpriteObject> group=null,
-            List<ObjectGroup<SpriteObject>> groups=null
+            SpriteParameters spriteParameters
         ):base(
-            spriteBatch:spriteBatch,
-            wrapper:wrapper,
-            depth:depth,
-            xDelegate:xDelegate,
-            yDelegate:yDelegate,
-            widthDelegate:widthDelegate,
-            heightDelegate:heightDelegate,
-            rotation:rotation,
-            origin:origin,
-            color:color,
-            group:group,
-            groups:groups,
-            x:x,
-            y:y,
-            width:width,
-            height:height
+            spriteParameters: spriteParameters
         ){
-            this.font = font;
-            this._text = text;// Private reference is used so that the texture isn't elaborated before it can be
-            if(originalHeightDelegate!=null)
-                this.originalHeightDelegate = originalHeightDelegate;
+            this.font = spriteParameters.font;
+            this._text = spriteParameters.text;// Private reference is used so that the texture isn't elaborated before it can be
+            if(spriteParameters.originalHeightDelegate!=null)
+                this.originalHeightDelegate = spriteParameters.originalHeightDelegate;
             else
                 this.originalHeightDelegate = (SpriteObject sprite) => 1000;
-            if(originalWidthDelegate!=null)
-                this.originalWidthDelegate = originalWidthDelegate;
+            if(spriteParameters.originalWidthDelegate!=null)
+                this.originalWidthDelegate = spriteParameters.originalWidthDelegate;
             else
                 this.originalWidthDelegate = (SpriteObject sprite) => 1000;
-            this.wrapMode = wrapMode;
-            this.layoutMode = layoutMode;
-            this._offsetX = offsetX;
-            this._offsetY = offsetY;
+            
+            this.wrapMode = spriteParameters.wrapMode;
+            this.layoutMode = spriteParameters.layoutMode;
+            this._offsetX = spriteParameters.offsetX;
+            this._offsetY = spriteParameters.offsetY;
             
             ElaborateTexture();
         }

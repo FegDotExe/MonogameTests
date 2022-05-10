@@ -337,13 +337,13 @@ namespace FCSG{
         public SpriteFont font;
         public string text;
         public TextSprite.WrapMode wrapMode;
-        public TextSprite.LayoutMode LayoutMode;
+        public TextSprite.LayoutMode layoutMode;
         public int offsetX; //Only for TextSprite
         public int offsetY; //Only for TextSprite
         public IntSpriteObjDelegate originalWidthDelegate; //Only for TextSprite
         public IntSpriteObjDelegate originalHeightDelegate; //Only for TextSprite
         public Wrapper wrapper;
-        public float? depth;
+        public float depth;
         public IntSpriteObjDelegate xDelegate;
         public int? x;
         public IntSpriteObjDelegate yDelegate;
@@ -352,9 +352,9 @@ namespace FCSG{
         public int? width;
         public IntSpriteObjDelegate heightDelegate;
         public int? height;
-        public float? rotation; 
-        public Vector2? origin; 
-        public Color? color;
+        public float rotation; 
+        public Vector2 origin; 
+        public Color color;
         public ObjectGroup<SpriteObject> group;
         public List<ObjectGroup<SpriteObject>> groups;
         public ClickDelegate leftClickDelegate;
@@ -409,7 +409,7 @@ namespace FCSG{
             this.font=font;
             this.text=text;
             this.wrapMode=wrapMode;
-            this.LayoutMode=layoutMode;
+            this.layoutMode=layoutMode;
             this.offsetX=offsetX;
             this.offsetY=offsetY;
             this.originalWidthDelegate=originalWidthDelegate;
@@ -421,8 +421,6 @@ namespace FCSG{
             this.width=width;
             this.height=height;
             this.rotation=rotation;
-            this.origin=origin;
-            this.color=color;
             this.group=group;
             this.groups=groups;
             this.spritesDict=spritesDict;

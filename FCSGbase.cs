@@ -4,6 +4,7 @@ namespace FCSG{
     public delegate int IntSpriteBaseDelegate(SpriteBase sprite);
     public delegate int IntSpriteDelegate(Sprite sprite);
     public delegate int IntSpriteObjDelegate(SpriteObject sprite);
+    public delegate object ObjectSpriteBaseDelegate(SpriteBase sprite);
 
     public delegate double DoubleSpriteBaseDelegate(SpriteBase sprite);
 

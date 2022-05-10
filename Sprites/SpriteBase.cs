@@ -73,132 +73,70 @@ namespace FCSG{
         /// <param name="spritesDict">A dictionary to which the sprite will be added once constructed.</param>
         /// <param name="dictKey">The key the dictionary will use when inserted in the <c>spritesDict</c></param>
         public SpriteBase(
-            SpriteBatch spriteBatch,
-            Wrapper wrapper=null,
-            float? depth=null, 
-            IntSpriteObjDelegate xDelegate=null, 
-            int? x=null,
-            IntSpriteObjDelegate yDelegate=null,
-            int? y=null,
-            IntSpriteObjDelegate widthDelegate=null, 
-            int? width=null,
-            IntSpriteObjDelegate heightDelegate=null,
-            int? height=null,
-            float? rotation=null, 
-            Vector2? origin=null, 
-            Color? color=null,
-            ObjectGroup<SpriteObject> group=null,
-            List<ObjectGroup<SpriteObject>> groups=null,
-            ClickDelegate leftClickDelegate=null,
-            ClickDelegate middleClickDelegate=null,
-            ClickDelegate rightClickDelegate=null,
-            ClickDelegate wheelHoverDelegate=null,
-            ClickDelegate hoverDelegate=null,
-            Dictionary<string, SpriteBase> spritesDict=null,
-            string dictKey=null,
-            CollisionRectangle collisionRectangle=null
+            SpriteParameters spriteParameters
         ){
-            this.spriteBatch = spriteBatch;
+            this.spriteBatch = spriteParameters.spriteBatch;
 
-            this.wrapper = wrapper;
+            this.wrapper = spriteParameters.wrapper;
 
-            if(depth != null) //Sets the depth of the sprite
-                this.depth = (float)depth;
-            else
-                this.depth = 0;
+            this.depth = spriteParameters.depth;
 
             //Position delegates
-                if(x!=null){
-                    this.xDelegate=(SpriteObject sprite)=>(int)x;
-                }
-                else if(xDelegate != null)
-                    this.xDelegate = xDelegate;
-                else
-                    this.xDelegate = (SpriteObject sprite) => 0;
-                if(y!=null){
-                    this.yDelegate=(SpriteObject sprite)=>(int)y;
-                }
-                else if(yDelegate != null)
-                    this.yDelegate = yDelegate;
-                else
-                    this.yDelegate = (SpriteObject sprite) => 0;
+                this.xDelegate=spriteParameters.xDelegate;
+                this.yDelegate=spriteParameters.yDelegate;
 
             //Size delegates
-                if(width!=null){
-                    this.widthDelegate=(SpriteObject sprite)=>(int)width;
-                }
-                else if(widthDelegate!=null)
-                    this.widthDelegate = widthDelegate;
-                else
-                    this.widthDelegate = (SpriteObject sprite) => 100;
-                midWidth = -1; //FIXME: DON'T DELETE THIS VALUE WHEN REWRITING WITH SPRITEPARAMETERS
+                this.widthDelegate=spriteParameters.widthDelegate;
+                midWidth = -1;
                 
-                if(height!=null){
-                    this.heightDelegate=(SpriteObject sprite)=>(int)height;
-                }
-                else if(heightDelegate!=null)
-                    this.heightDelegate = heightDelegate;
-                else
-                    this.heightDelegate = (SpriteObject sprite) => 100;
-                midHeight = -1; //FIXME: DON'T DELETE THIS VALUE WHEN REWRITING WITH SPRITEPARAMETERS
+                this.heightDelegate=spriteParameters.heightDelegate;
+                midHeight = -1;
 
-            if(rotation!=null){ //Sets the rotation of the sprite
-                this.rotation = (float)rotation;
-            }else{
-                this.rotation = 0;
-            }
+            this.rotation=spriteParameters.rotation;
 
-            if(origin!=null){
-                this.origin = (Vector2)origin;
-            }else{
-                this.origin = new Vector2(0,0);
-            }
+            this.origin=spriteParameters.origin;
 
-            if(color!=null){
-                this.color = (Color)color;
-            }else{
-                this.color = Color.White;
-            }
-
-            this.draw=true; //TODO: should this even be here?->DO NOT DELETE THIS VALUE WHEN REWRITING WITH SPRITEPARAMETERS
+            this.color=spriteParameters.color;
 
             this.groups=new List<ObjectGroup<SpriteObject>>();
-            if(group!=null){ //Adds the sprite to the group
-                this.groups.Add(group);
-                group.Add(this);
+            if(spriteParameters.group!=null){ //Adds the sprite to the group
+                this.groups.Add(spriteParameters.group);
+                spriteParameters.group.Add(this);
             }
-            if (groups!=null){
-                foreach(ObjectGroup<SpriteObject> spriteGroup in groups){
+            if (spriteParameters.groups!=null){
+                foreach(ObjectGroup<SpriteObject> spriteGroup in spriteParameters.groups){
                     this.groups.Add(spriteGroup);
                     spriteGroup.Add(this);
                 }
             }
-            if(spritesDict!=null){
-                if(dictKey!=null){
-                    spritesDict.Add(dictKey,this);
+            if(spriteParameters.spritesDict!=null){
+                if(spriteParameters.dictKey!=null){
+                    spriteParameters.spritesDict.Add(spriteParameters.dictKey,this);
                 }else{
                     Console.WriteLine("Warning: SpriteBase constructor: dictKey is null, thus the object was not added to the dictionary.");
                 }
             }
 
             //Click delegates
-                this.leftClickDelegate = leftClickDelegate;
-                this.middleClickDelegate = middleClickDelegate;
-                this.rightClickDelegate = rightClickDelegate;
-                this.wheelHoverDelegate = wheelHoverDelegate;
-                this.hoverDelegate = hoverDelegate;
+                this.leftClickDelegate = spriteParameters.leftClickDelegate;
+                this.middleClickDelegate = spriteParameters.middleClickDelegate;
+                this.rightClickDelegate = spriteParameters.rightClickDelegate;
+                this.wheelHoverDelegate = spriteParameters.wheelHoverDelegate;
+                this.hoverDelegate = spriteParameters.hoverDelegate;
 
             //Collision rectangle
-            if(collisionRectangle==null){
+            if(spriteParameters.collisionRectangle==null){
                 this.collisionRectangle = new CollisionRectangle(this);
             }else{
-                this.collisionRectangle = collisionRectangle;
+                this.collisionRectangle = spriteParameters.collisionRectangle;
             }
 
             //Add to wrapper
             if(wrapper!=null){
                 wrapper.Add(this);
             }
+
+            this.draw=true;
         }
         #endregion Constructors
         public virtual void Draw(bool drawMiddle=true){
