@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png</SourceFile>
+  <SourceFile>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png</SourceFile>
   <SourceTime>2021-11-07T22:29:29.5352718+01:00</SourceTime>
-  <DestFile>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/assets/totem_of_time.xnb</DestFile>
-  <DestTime>2022-05-10T12:06:28.9682082+02:00</DestTime>
+  <DestFile>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/Content/assets/totem_of_time.xnb</DestFile>
+  <DestTime>2022-05-11T20:41:07.4765903+02:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+02:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

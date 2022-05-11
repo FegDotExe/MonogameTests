@@ -34,6 +34,9 @@ namespace MonogameTests
 
         private GameClock clock;
         private TimeEvent timeEvent=null;
+
+        private LinkedVariable resizeVariable;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -77,11 +80,11 @@ namespace MonogameTests
                 color: new Color(0,255,0,255))
             );
 
-            SVariable sVariableTest=new SVariable(colorSprite, (SpriteBase sb)=>"A");
-            SVariable sVb=new SVariable(colorSprite, (SpriteBase sb)=>sVariableTest+"B", new SVariable[] {sVariableTest});
-            SVariable sVc=new SVariable(colorSprite, (SpriteBase sb)=>sVariableTest+"C", new SVariable[] {sVariableTest});
-            SVariable sVd=new SVariable(colorSprite, (SpriteBase sb)=>(string)sVariableTest+sVb+sVc+"D", new SVariable[] {sVariableTest,sVb,sVc});
-            SVariable sVe=new SVariable(colorSprite, (SpriteBase sb)=>sVb+"E", new SVariable[] {sVb});
+            LinkedVariable sVariableTest=new LinkedVariable(colorSprite, (SpriteBase sb)=>"A");
+            LinkedVariable sVb=new LinkedVariable(colorSprite, (SpriteBase sb)=>sVariableTest+"B", new LinkedVariable[] {sVariableTest});
+            LinkedVariable sVc=new LinkedVariable(colorSprite, (SpriteBase sb)=>sVariableTest+"C", new LinkedVariable[] {sVariableTest});
+            LinkedVariable sVd=new LinkedVariable(colorSprite, (SpriteBase sb)=>(string)sVariableTest+sVb+sVc+"D", new LinkedVariable[] {sVariableTest,sVb,sVc});
+            LinkedVariable sVe=new LinkedVariable(colorSprite, (SpriteBase sb)=>sVb+"E", new LinkedVariable[] {sVb});
             sVariableTest.Set("X");
 
             //wrapper.Add(colorSprite);
@@ -113,11 +116,13 @@ namespace MonogameTests
 
             TextureGenerator chessTextureGenerator=new TextureGenerator(GraphicsDevice,group2,16*x_chess,16*y_chess,_spriteBatch);
 
+            resizeVariable=new LinkedVariable(null, (SpriteBase sb)=>GraphicsDevice.Viewport.Width); //FIXME: really temp solution->a good one would count Height too
+
             wrapper.Add(new Sprite(
                 new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:chessTextureGenerator.Generate(),
                 depth:0.1f,
-                xDelegate:(SpriteObject so)=>(GraphicsDevice.Viewport.Width-Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height))/2,
+                xVariable:new LinkedVariableParams((SpriteBase sb)=>(GraphicsDevice.Viewport.Width-Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height))/2,sensitiveVariables:new LinkedVariable[] {resizeVariable}),
                 y:0,
                 widthDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),
                 heightDelegate:(SpriteObject so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),
@@ -132,8 +137,14 @@ namespace MonogameTests
                 new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:white,
                 depth:0.11f,
-                xDelegate:(SpriteObject so)=>(int)Math.Round((double)(spriteDict["chess"].x+((((double)spriteDict["chess"].width)/(double)x_chess)*x_pos))),
-                yDelegate:(SpriteObject so)=>(int)Math.Round((double)(spriteDict["chess"].height+spriteDict["chess"].y-so.height-((((double)spriteDict["chess"].width)/(double)x_chess)*y_pos))),
+                xVariable:new LinkedVariableParams(
+                    (SpriteBase sb)=>Math.Round((double)((int)spriteDict["chess"].x+((((double)spriteDict["chess"].width)/(double)x_chess)*x_pos))), 
+                    new LinkedVariable[] {spriteDict["chess"].xVariable}
+                ),
+                yVariable:new LinkedVariableParams(
+                    (SpriteBase sb)=>(int)Math.Round((double)(spriteDict["chess"].height+spriteDict["chess"].y-sb.height-((((double)spriteDict["chess"].width)/(double)x_chess)*y_pos))), 
+                    new LinkedVariable[] {spriteDict["chess"].yVariable}
+                ),
                 widthDelegate:(SpriteObject so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)x_chess),
                 heightDelegate:(SpriteObject so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)y_chess))
             ));
@@ -144,7 +155,10 @@ namespace MonogameTests
             // Utilities.DrawOntoTarget(renderTarget,new ObjectGroup<Object2D>(group.objects.ConvertAll<Object2D>(x=>(Object2D)x)),_spriteBatch);
             
             //randomSprite=wrapper.NewSprite(renderTarget,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y);
-            randomSprite=new Sprite(new SpriteParameters(_spriteBatch,red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),xDelegate:(SpriteObject sprite)=>x,yDelegate:(SpriteObject sprite)=>y,leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
+            randomSprite=new Sprite(new SpriteParameters(_spriteBatch,red,widthDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),heightDelegate:(SpriteObject sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),
+                xVariable:new LinkedVariableParams((SpriteBase sprite)=>x), //FIXME: fix these, as they are not sensible to the values
+                yVariable:new LinkedVariableParams((SpriteBase sprite)=>y),
+                leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
                     if(randomSprite.texture==red){
                         randomSprite.texture=blue;
                     }else{
@@ -183,6 +197,8 @@ namespace MonogameTests
 
         protected override void Update(GameTime gameTime)
         {
+            resizeVariable.Set(GraphicsDevice.Viewport.Width);
+
             double requiredTime=0.1d;
             int amount=100;
             //Console.WriteLine("x: "+x);
@@ -307,8 +323,8 @@ namespace MonogameTests
                         new SpriteParameters(spriteBatch,
                         texture,
                         depth:0f,
-                        xDelegate: (SpriteObject sprite)=>(copyX*(graphicsDevice.Viewport.Width/DIVIDER)), 
-                        yDelegate: (SpriteObject sprite)=>(copyY*(graphicsDevice.Viewport.Width/DIVIDER)), 
+                        // xDelegate: (SpriteObject sprite)=>(copyX*(graphicsDevice.Viewport.Width/DIVIDER)), 
+                        // yDelegate: (SpriteObject sprite)=>(copyY*(graphicsDevice.Viewport.Width/DIVIDER)), 
                         widthDelegate: (SpriteObject sprite)=>graphicsDevice.Viewport.Width/DIVIDER, 
                         heightDelegate: (SpriteObject sprite)=>graphicsDevice.Viewport.Width/DIVIDER,
                         group:spriteGroup)

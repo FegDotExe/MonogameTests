@@ -30,9 +30,9 @@ namespace FCSG{
             float depth=0, 
             ObjectGroup<SpriteObject> group=null,
             List<ObjectGroup<SpriteObject>> groups=null,
-            IntSpriteObjDelegate xDelegate=null, 
+            LinkedVariableParams xVariable=null, 
             int? x=null,
-            IntSpriteObjDelegate yDelegate=null,
+            LinkedVariableParams yVariable=null,
             int? y=null,
             IntSpriteObjDelegate widthDelegate=null, 
             int? width=null,
@@ -47,7 +47,7 @@ namespace FCSG{
             ClickDelegate wheelHoverDelegate=null,
             ClickDelegate hoverDelegate=null
         ){
-            Sprite newSprite=new Sprite(new SpriteParameters(spriteBatch, texture:texture, wrapper:this, group:group, groups:groups, depth:depth, xDelegate:xDelegate, yDelegate:yDelegate, widthDelegate:widthDelegate, heightDelegate:heightDelegate, rotation:rotation, origin:origin, color:color, x:x, y:y, width:width, height:height, leftClickDelegate:leftClickDelegate, middleClickDelegate:middleClickDelegate, rightClickDelegate:rightClickDelegate, wheelHoverDelegate:wheelHoverDelegate, hoverDelegate:hoverDelegate));
+            Sprite newSprite=new Sprite(new SpriteParameters(spriteBatch, texture:texture, wrapper:this, group:group, groups:groups, depth:depth, xVariable:xVariable, yVariable:yVariable, widthDelegate:widthDelegate, heightDelegate:heightDelegate, rotation:rotation, origin:origin, color:color, x:x, y:y, width:width, height:height, leftClickDelegate:leftClickDelegate, middleClickDelegate:middleClickDelegate, rightClickDelegate:rightClickDelegate, wheelHoverDelegate:wheelHoverDelegate, hoverDelegate:hoverDelegate));
             sprites.Add(newSprite);
             return newSprite;
         }

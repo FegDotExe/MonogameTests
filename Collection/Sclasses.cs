@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using System;
 namespace FCSG{
-    public delegate bool BoolSVariable(SVariable var);
-    public class SVariable{
+    public delegate bool BoolLinkedVariableDelegate(LinkedVariable var);
+    public class LinkedVariable{
         protected bool round=true; //Wether int values should be rounded or not
         protected bool updating; //If true, it means that the value is being updated (and has not yet been set)
         protected ObjectSpriteBaseDelegate objectDelegate;
-        protected BoolSVariable changedDelegate=(SVariable var)=>var._value!=var.objectDelegate(var.spriteBase);
+        protected BoolLinkedVariableDelegate changedDelegate=(LinkedVariable var)=>var._value!=var.objectDelegate(var.spriteBase);
         protected SpriteBase spriteBase;
-        protected List<SVariable> linkedVariables;
+        protected List<LinkedVariable> linkedVariables;
 
-        protected object _value;
+        protected object _value=null;
         protected object objectValue{
             get{
+                if(_value==null){
+                    _value=objectDelegate(spriteBase);
+                }
                 if(!updating){
                     return _value;
                 }
@@ -34,10 +37,13 @@ namespace FCSG{
         public void Round(bool round){
             this.round=round;
         }
+        public void SetSprite(SpriteBase sprite){
+            this.spriteBase=sprite;
+        }
 
         private void SetUpdating(){
             updating=true;
-            foreach(SVariable sv in linkedVariables){
+            foreach(LinkedVariable sv in linkedVariables){
                 // Console.WriteLine("Setting "+sv+" to updating");
                 if(!sv.updating){
                     // Console.WriteLine("Set "+sv+" to updating");
@@ -51,7 +57,7 @@ namespace FCSG{
                 _value=objectDelegate(spriteBase);
                 updating=false;
                 // Console.WriteLine("SVariable updated: "+this.ToString());
-                foreach(SVariable sv in linkedVariables){
+                foreach(LinkedVariable sv in linkedVariables){
                     if(sv.updating){
                         sv.Update();
                     }
@@ -64,7 +70,7 @@ namespace FCSG{
         ///<summary>
         ///Adds a variable which will be updated when this variable is updated
         ///</summary>
-        public void AddLinkedVariable(SVariable sv){//Adds a variable (sv) which is sensitive to this
+        public void AddLinkedVariable(LinkedVariable sv){//Adds a variable (sv) which is sensitive to this
             if(!linkedVariables.Contains(sv)){
                 // Console.WriteLine("Adding "+this+" to "+sv);
                 linkedVariables.Add(sv);
@@ -73,86 +79,148 @@ namespace FCSG{
         ///<summary>
         ///Adds this variable to sv's linked variables, so that this is updated when sv is updated
         ///</summary>
-        public void LinkTo(SVariable sv){//Makes this variable sensitive to sv
+        public void LinkTo(LinkedVariable sv){//Makes this variable sensitive to sv
             // Console.WriteLine("Adding "+this+" to "+sv);
             sv.AddLinkedVariable(this);
         }
 
         #region Constructors
         //Without anything
-        public SVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate){
+        public LinkedVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate){
             this.spriteBase=spriteBase;
-            linkedVariables=new List<SVariable>();
+            linkedVariables=new List<LinkedVariable>();
             this.objectDelegate=objectDelegate;
-            _value=objectDelegate(spriteBase);
+            // _value=objectDelegate(spriteBase);
         }
 
-        public SVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, BoolSVariable changedDelegate){
+        public LinkedVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, BoolLinkedVariableDelegate changedDelegate){
             this.spriteBase=spriteBase;
-            linkedVariables=new List<SVariable>();
+            linkedVariables=new List<LinkedVariable>();
             this.changedDelegate=changedDelegate;
             this.objectDelegate=objectDelegate;
-            _value=objectDelegate(spriteBase);
+            // _value=objectDelegate(spriteBase);
         }
 
         //With lists
-        public SVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, List<SVariable> sensitiveVariables){
+        public LinkedVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, List<LinkedVariable> sensitiveVariables){
             this.spriteBase=spriteBase;
-            linkedVariables=new List<SVariable>();
+            linkedVariables=new List<LinkedVariable>();
             this.objectDelegate=objectDelegate;
-            _value=objectDelegate(spriteBase);
-            foreach(SVariable sv in sensitiveVariables){
+            // _value=objectDelegate(spriteBase);
+            foreach(LinkedVariable sv in sensitiveVariables){
                 LinkTo(sv);
             }
         }
 
-        public SVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, BoolSVariable changedDelegate, List<SVariable> sensitiveVariables){
+        public LinkedVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, BoolLinkedVariableDelegate changedDelegate, List<LinkedVariable> sensitiveVariables){
             this.spriteBase=spriteBase;
-            linkedVariables=new List<SVariable>();
+            linkedVariables=new List<LinkedVariable>();
             this.changedDelegate=changedDelegate;
             this.objectDelegate=objectDelegate;
-            _value=objectDelegate(spriteBase);
-            foreach(SVariable sv in sensitiveVariables){
+            // _value=objectDelegate(spriteBase);
+            foreach(LinkedVariable sv in sensitiveVariables){
                 LinkTo(sv);
             }
         }
 
         //With arrays
-        public SVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, SVariable[] sensitiveVariables){
+        public LinkedVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, LinkedVariable[] sensitiveVariables){
             this.spriteBase=spriteBase;
-            linkedVariables=new List<SVariable>();
+            linkedVariables=new List<LinkedVariable>();
             this.objectDelegate=objectDelegate;
-            _value=objectDelegate(spriteBase);
-            foreach(SVariable sv in sensitiveVariables){
+            // _value=objectDelegate(spriteBase);
+            foreach(LinkedVariable sv in sensitiveVariables){
                 LinkTo(sv);
             }
         }
 
-        public SVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, BoolSVariable changedDelegate, SVariable[] sensitiveVariables){
+        public LinkedVariable(SpriteBase spriteBase, ObjectSpriteBaseDelegate objectDelegate, BoolLinkedVariableDelegate changedDelegate, LinkedVariable[] sensitiveVariables){
             this.spriteBase=spriteBase;
-            linkedVariables=new List<SVariable>();
+            linkedVariables=new List<LinkedVariable>();
             this.changedDelegate=changedDelegate;
             this.objectDelegate=objectDelegate;
-            _value=objectDelegate(spriteBase);
-            foreach(SVariable sv in sensitiveVariables){
+            // _value=objectDelegate(spriteBase);
+            foreach(LinkedVariable sv in sensitiveVariables){
                 LinkTo(sv);
+            }
+        }
+
+        //Without spritebase, with arrays
+        public LinkedVariable(ObjectSpriteBaseDelegate objectDelegate, LinkedVariable[] sensitiveVariables){
+            linkedVariables=new List<LinkedVariable>();
+            this.objectDelegate=objectDelegate;
+            // _value=objectDelegate(spriteBase);
+            foreach(LinkedVariable sv in sensitiveVariables){
+                LinkTo(sv);
+            }
+        }
+
+        public LinkedVariable(ObjectSpriteBaseDelegate objectDelegate, BoolLinkedVariableDelegate changedDelegate, LinkedVariable[] sensitiveVariables){
+            linkedVariables=new List<LinkedVariable>();
+            this.changedDelegate=changedDelegate;
+            this.objectDelegate=objectDelegate;
+            // _value=objectDelegate(spriteBase);
+            foreach(LinkedVariable sv in sensitiveVariables){
+                LinkTo(sv);
+            }
+        }
+
+        //Without spritebase, without arrays
+        public LinkedVariable(ObjectSpriteBaseDelegate objectDelegate){
+            linkedVariables=new List<LinkedVariable>();
+            this.objectDelegate=objectDelegate;
+            // _value=objectDelegate(spriteBase);
+        }
+
+        public LinkedVariable(ObjectSpriteBaseDelegate objectDelegate, BoolLinkedVariableDelegate changedDelegate){
+            linkedVariables=new List<LinkedVariable>();
+            this.changedDelegate=changedDelegate;
+            this.objectDelegate=objectDelegate;
+            // _value=objectDelegate(spriteBase);
+        }
+
+        //With settings
+        public LinkedVariable(SpriteBase spriteBase, LinkedVariableParams parameters){
+            this.spriteBase=spriteBase;
+            linkedVariables=new List<LinkedVariable>();
+            if(parameters.changedDelegate!=null){
+                this.changedDelegate=parameters.changedDelegate;
+            }
+            this.objectDelegate=parameters.objectDelegate;
+            // _value=objectDelegate(spriteBase);
+            if(parameters.sensitiveVariables!=null){
+                foreach(LinkedVariable sv in parameters.sensitiveVariables){
+                    LinkTo(sv);
+                }   
             }
         }
         #endregion Constructors
 
-        public static implicit operator int(SVariable sv){
-            try{
-                if(!sv.round){
+        public static implicit operator int(LinkedVariable sv){
+            if(!sv.round){
+                if(sv.objectValue.GetType()==typeof(int)){
                     return (int)sv.objectValue;
-                }else{
-                    return (int)Math.Round((double)sv.objectValue);
                 }
-            }catch(System.InvalidCastException){
-                throw new System.InvalidCastException("The SVariable cannot be cast to an int; its type is "+sv.objectValue.GetType().ToString());
+                else if(sv.objectValue.GetType()==typeof(double))
+                {
+                    return (int)(double)sv.objectValue;
+                }else{
+                    throw new System.InvalidCastException("Cannot cast "+sv.objectValue.GetType()+" to int");
+                }
+            }else{
+                if(sv.objectValue.GetType()==typeof(int)){
+                    return (int)Math.Round((double)(int)sv.objectValue);
+                }
+                else if(sv.objectValue.GetType()==typeof(double))
+                {
+                    return (int)Math.Round((double)sv.objectValue);
+                }else{
+                    throw new System.InvalidCastException("Cannot cast "+sv.objectValue.GetType()+" to int");
+                }
             }
         }
 
-        public static implicit operator string(SVariable sv){
+        public static implicit operator string(LinkedVariable sv){
             try{
                 return (string)sv.objectValue;
             }catch(System.InvalidCastException){
@@ -162,6 +230,18 @@ namespace FCSG{
 
         public override string ToString(){
             return "§"+objectValue.ToString()+"§";
+        }
+    }
+
+    public class LinkedVariableParams{
+        public ObjectSpriteBaseDelegate objectDelegate;
+        public BoolLinkedVariableDelegate changedDelegate;
+        public LinkedVariable[] sensitiveVariables;
+
+        public LinkedVariableParams(ObjectSpriteBaseDelegate objectDelegate, LinkedVariable[] sensitiveVariables=null, BoolLinkedVariableDelegate changedDelegate=null){
+            this.objectDelegate=objectDelegate;
+            this.changedDelegate=changedDelegate;
+            this.sensitiveVariables=sensitiveVariables;
         }
     }
 }

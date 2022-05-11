@@ -13,15 +13,15 @@ namespace FCSG{
         protected SpriteBatch spriteBatch;
         //Position values
             public int x{
-                get{return xDelegate(this);}
-                set{xDelegate=(SpriteObject sprite)=>value;}
+                get{return xVariable;}
+                set{xVariable.Set(value);}
             }
             public int y{
-                get{return yDelegate(this);}
-                set{yDelegate=(SpriteObject sprite)=>value;}
+                get{return yVariable;}
+                set{yVariable.Set(value);}
             }
-            protected IntSpriteObjDelegate xDelegate;
-            protected IntSpriteObjDelegate yDelegate;
+            public LinkedVariable xVariable;
+            public LinkedVariable yVariable;
         //Size values
             protected IntSpriteObjDelegate widthDelegate;
             protected IntSpriteObjDelegate heightDelegate;
@@ -81,9 +81,25 @@ namespace FCSG{
 
             this.depth = spriteParameters.depth;
 
-            //Position delegates
-                this.xDelegate=spriteParameters.xDelegate;
-                this.yDelegate=spriteParameters.yDelegate;
+            //Position variables
+                if(spriteParameters.x!=null){
+                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.x);
+                }
+                else if(spriteParameters.xVariable != null){
+                    this.xVariable = new LinkedVariable(this, spriteParameters.xVariable);
+                    xVariable.SetSprite(this);
+                }
+                else
+                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
+                if(spriteParameters.y!=null){
+                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.y);
+                }
+                else if(spriteParameters.yVariable != null){
+                    this.yVariable = new LinkedVariable(this, spriteParameters.yVariable);
+                    yVariable.SetSprite(this);
+                }
+                else
+                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
 
             //Size delegates
                 this.widthDelegate=spriteParameters.widthDelegate;

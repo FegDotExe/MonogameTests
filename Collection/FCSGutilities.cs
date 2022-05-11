@@ -344,9 +344,9 @@ namespace FCSG{
         public IntSpriteObjDelegate originalHeightDelegate; //Only for TextSprite
         public Wrapper wrapper;
         public float depth;
-        public IntSpriteObjDelegate xDelegate;
+        public LinkedVariableParams xVariable;
         public int? x;
-        public IntSpriteObjDelegate yDelegate;
+        public LinkedVariableParams yVariable;
         public int? y;
         public IntSpriteObjDelegate widthDelegate;
         public int? width;
@@ -381,9 +381,9 @@ namespace FCSG{
             IntSpriteObjDelegate originalHeightDelegate=null, //Only for TextSprite
             Wrapper wrapper=null,
             float depth=0, 
-            IntSpriteObjDelegate xDelegate=null, 
+            LinkedVariableParams xVariable=null,
             int? x=null,
-            IntSpriteObjDelegate yDelegate=null,
+            LinkedVariableParams yVariable=null,
             int? y=null,
             IntSpriteObjDelegate widthDelegate=null, 
             int? width=null,
@@ -416,8 +416,6 @@ namespace FCSG{
             this.originalHeightDelegate=originalHeightDelegate;
             this.wrapper=wrapper;
             this.depth=depth;
-            this.x=x;
-            this.y=y;
             this.width=width;
             this.height=height;
             this.rotation=rotation;
@@ -427,21 +425,11 @@ namespace FCSG{
             this.dictKey=dictKey;
             this.collisionRectangle=collisionRectangle;
 
-            //Position delegates
-                if(x!=null){
-                    this.xDelegate=(SpriteObject sprite)=>(int)x;
-                }
-                else if(xDelegate != null)
-                    this.xDelegate = xDelegate;
-                else
-                    this.xDelegate = (SpriteObject sprite) => 0;
-                if(y!=null){
-                    this.yDelegate=(SpriteObject sprite)=>(int)y;
-                }
-                else if(yDelegate != null)
-                    this.yDelegate = yDelegate;
-                else
-                    this.yDelegate = (SpriteObject sprite) => 0;
+            // Position variables
+                this.xVariable=xVariable;
+                this.x=x;
+                this.yVariable=yVariable;
+                this.y=y;
 
             //Size delegates
                 if(width!=null){
