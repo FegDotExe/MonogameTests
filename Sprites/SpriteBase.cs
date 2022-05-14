@@ -11,6 +11,7 @@ namespace FCSG{
     public class SpriteBase : SpriteObject{
         #region Fields
         protected SpriteBatch spriteBatch;
+        public string name="";
         //Position values
             public int x{
                 get{return xVariable;}
@@ -23,16 +24,16 @@ namespace FCSG{
             public LinkedVariable xVariable;
             public LinkedVariable yVariable;
         //Size values
-            protected IntSpriteObjDelegate widthDelegate;
-            protected IntSpriteObjDelegate heightDelegate;
+            public LinkedVariable widthVariable;
+            public LinkedVariable heightVariable;
             public int width{
-                get{return widthDelegate(this);}
-                set{widthDelegate=(SpriteObject sprite)=>value;}
+                get{return widthVariable;}
+                set{widthVariable.Set(value);}
             }
             protected int midWidth{get;set;} //Used to know wether the middle texture should be redrawn or not
             public int height{
-                get{return heightDelegate(this);}
-                set{heightDelegate=(SpriteObject sprite)=>value;}
+                get{return heightVariable;}
+                set{heightVariable.Set(value);}
             }
             protected int midHeight{get;set;} //Used to know wether the middle texture should be redrawn or not
         public Texture2D texture{get;set;}
@@ -79,41 +80,7 @@ namespace FCSG{
 
             this.wrapper = spriteParameters.wrapper;
 
-            this.depth = spriteParameters.depth;
-
-            //Position variables
-                if(spriteParameters.x!=null){
-                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.x);
-                }
-                else if(spriteParameters.xVariable != null){
-                    this.xVariable = new LinkedVariable(this, spriteParameters.xVariable);
-                    xVariable.SetSprite(this);
-                }
-                else
-                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
-                if(spriteParameters.y!=null){
-                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.y);
-                }
-                else if(spriteParameters.yVariable != null){
-                    this.yVariable = new LinkedVariable(this, spriteParameters.yVariable);
-                    yVariable.SetSprite(this);
-                }
-                else
-                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
-
-            //Size delegates
-                this.widthDelegate=spriteParameters.widthDelegate;
-                midWidth = -1;
-                
-                this.heightDelegate=spriteParameters.heightDelegate;
-                midHeight = -1;
-
-            this.rotation=spriteParameters.rotation;
-
-            this.origin=spriteParameters.origin;
-
-            this.color=spriteParameters.color;
-
+            //Adding to groups
             this.groups=new List<ObjectGroup<SpriteObject>>();
             if(spriteParameters.group!=null){ //Adds the sprite to the group
                 this.groups.Add(spriteParameters.group);
@@ -128,10 +95,58 @@ namespace FCSG{
             if(spriteParameters.spritesDict!=null){
                 if(spriteParameters.dictKey!=null){
                     spriteParameters.spritesDict.Add(spriteParameters.dictKey,this);
+                    this.name=spriteParameters.dictKey; //FIXME: remove this along with names
                 }else{
                     Console.WriteLine("Warning: SpriteBase constructor: dictKey is null, thus the object was not added to the dictionary.");
                 }
             }
+
+            this.depth = spriteParameters.depth;
+
+            //Position variables
+                if(spriteParameters.x!=null){
+                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.x);
+                }
+                else if(spriteParameters.xVariable != null){
+                    this.xVariable = new LinkedVariable(this, spriteParameters.xVariable);
+                    // xVariable.SetSprite(this);
+                }
+                else
+                    this.xVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
+                if(spriteParameters.y!=null){
+                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>spriteParameters.y);
+                }
+                else if(spriteParameters.yVariable != null){
+                    this.yVariable = new LinkedVariable(this, spriteParameters.yVariable);
+                    // yVariable.SetSprite(this);
+                }
+                else
+                    this.yVariable = new LinkedVariable(this,(SpriteBase sb)=>0);
+
+            //Size delegates
+                if(spriteParameters.width!=null){
+                    this.widthVariable=new LinkedVariable(this,(SpriteBase sprite)=>(int)spriteParameters.width);
+                }
+                else if(spriteParameters.widthVariable!=null)
+                    this.widthVariable = new LinkedVariable(this, spriteParameters.widthVariable);
+                else
+                    this.widthVariable = new LinkedVariable(this,(SpriteBase sprite) => 100);
+                midWidth = -1;
+                
+                if(spriteParameters.height!=null){
+                    this.heightVariable=new LinkedVariable(this,(SpriteBase sprite)=>(int)spriteParameters.height);
+                }
+                else if(spriteParameters.heightVariable!=null)
+                    this.heightVariable = new LinkedVariable(this, spriteParameters.heightVariable);
+                else
+                    this.heightVariable = new LinkedVariable(this,(SpriteBase sprite) => 100);
+                midHeight = -1;
+
+            this.rotation=spriteParameters.rotation;
+
+            this.origin=spriteParameters.origin;
+
+            this.color=spriteParameters.color;
 
             //Click delegates
                 this.leftClickDelegate = spriteParameters.leftClickDelegate;
@@ -151,6 +166,11 @@ namespace FCSG{
             if(wrapper!=null){
                 wrapper.Add(this);
             }
+
+            this.xVariable.Activate();
+            this.yVariable.Activate();
+            this.widthVariable.Activate();
+            this.heightVariable.Activate();
 
             this.draw=true;
         }

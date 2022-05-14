@@ -134,7 +134,18 @@ namespace FCSG{
             }else{
                 mouseHandler.Up(Clicks.Left,mouseState.X,mouseState.Y);
             }
-            //TODO: finish this and reevaluate life choices (is a mouse handler really needed?)
+            //TODO: finish this and reevaluate life choices (is a mouse handler really needed?)->I think not
+        }
+
+        /// <summary>
+        /// Used to choose between two objects, giving priority to the second one; if o2 is null, o1 is returned, otherwise o2 is returned.
+        /// </summary>
+        public static object Choose(object o1,object o2){ //TODO: make this method use generic types
+            if(o2==null){
+                return o1;
+            }else{
+                return o2;
+            }
         }
     }
 
@@ -348,9 +359,9 @@ namespace FCSG{
         public int? x;
         public LinkedVariableParams yVariable;
         public int? y;
-        public IntSpriteObjDelegate widthDelegate;
+        public LinkedVariableParams widthVariable;
         public int? width;
-        public IntSpriteObjDelegate heightDelegate;
+        public LinkedVariableParams heightVariable;
         public int? height;
         public float rotation; 
         public Vector2 origin; 
@@ -369,7 +380,7 @@ namespace FCSG{
         #endregion Fields
         #region Constructor
         public SpriteParameters(
-            SpriteBatch spriteBatch,
+            SpriteBatch spriteBatch=null,
             Texture2D texture=null, //Only for Sprite
             SpriteFont font=null, //Only for TextSprite
             string text=null, //Only for TextSprite
@@ -385,9 +396,9 @@ namespace FCSG{
             int? x=null,
             LinkedVariableParams yVariable=null,
             int? y=null,
-            IntSpriteObjDelegate widthDelegate=null, 
+            LinkedVariableParams widthVariable=null, 
             int? width=null,
-            IntSpriteObjDelegate heightDelegate=null,
+            LinkedVariableParams heightVariable=null,
             int? height=null,
             float rotation=0, 
             Vector2? origin=null, 
@@ -431,22 +442,9 @@ namespace FCSG{
                 this.yVariable=yVariable;
                 this.y=y;
 
-            //Size delegates
-                if(width!=null){
-                    this.widthDelegate=(SpriteObject sprite)=>(int)width;
-                }
-                else if(widthDelegate!=null)
-                    this.widthDelegate = widthDelegate;
-                else
-                    this.widthDelegate = (SpriteObject sprite) => 100;
-                
-                if(height!=null){
-                    this.heightDelegate=(SpriteObject sprite)=>(int)height;
-                }
-                else if(heightDelegate!=null)
-                    this.heightDelegate = heightDelegate;
-                else
-                    this.heightDelegate = (SpriteObject sprite) => 100;
+            //Size variables
+                this.widthVariable=widthVariable;
+                this.heightVariable=heightVariable;
 
             //Click delegates
                 this.leftClickDelegate = leftClickDelegate;
@@ -470,5 +468,46 @@ namespace FCSG{
             }
         }
         #endregion Constructor
+    
+        #region Operators
+        public static SpriteParameters operator +(SpriteParameters sp1, SpriteParameters sp2){
+            SpriteParameters output=new SpriteParameters();
+            output.spriteBatch=(SpriteBatch)Utilities.Choose(sp1.spriteBatch,sp2.spriteBatch);
+            output.texture=(Texture2D)Utilities.Choose(sp1.texture,sp2.texture);
+            output.font=(SpriteFont)Utilities.Choose(sp1.font,sp2.font);
+            output.text=(string)Utilities.Choose(sp1.text,sp2.text);
+            output.wrapMode=(TextSprite.WrapMode)Utilities.Choose(sp1.wrapMode,sp2.wrapMode);
+            output.layoutMode=(TextSprite.LayoutMode)Utilities.Choose(sp1.layoutMode,sp2.layoutMode);
+            output.offsetX=(int)Utilities.Choose(sp1.offsetX,sp2.offsetX);
+            output.offsetY=(int)Utilities.Choose(sp1.offsetY,sp2.offsetY);
+            output.originalWidthDelegate=(IntSpriteObjDelegate)Utilities.Choose(sp1.originalWidthDelegate,sp2.originalWidthDelegate);
+            output.originalHeightDelegate=(IntSpriteObjDelegate)Utilities.Choose(sp1.originalHeightDelegate,sp2.originalHeightDelegate);
+            output.wrapper=(Wrapper)Utilities.Choose(sp1.wrapper,sp2.wrapper);
+            output.depth=(float)Utilities.Choose(sp1.depth,sp2.depth);
+            output.xVariable=(LinkedVariableParams)Utilities.Choose(sp1.xVariable,sp2.xVariable);
+            output.x=(int?)Utilities.Choose(sp1.x,sp2.x);
+            output.yVariable=(LinkedVariableParams)Utilities.Choose(sp1.yVariable,sp2.yVariable);
+            output.y=(int?)Utilities.Choose(sp1.y,sp2.y);
+            output.widthVariable=(LinkedVariableParams)Utilities.Choose(sp1.widthVariable,sp2.widthVariable);
+            output.width=(int?)Utilities.Choose(sp1.width,sp2.width);
+            output.heightVariable=(LinkedVariableParams)Utilities.Choose(sp1.heightVariable,sp2.heightVariable);
+            output.height=(int?)Utilities.Choose(sp1.height,sp2.height);
+            output.rotation=(float)Utilities.Choose(sp1.rotation,sp2.rotation);
+            output.origin=(Vector2)Utilities.Choose(sp1.origin,sp2.origin);
+            output.color=(Color)Utilities.Choose(sp1.color,sp2.color);
+            output.group=(ObjectGroup<SpriteObject>)Utilities.Choose(sp1.group,sp2.group);
+            output.groups=(List<ObjectGroup<SpriteObject>>)Utilities.Choose(sp1.groups,sp2.groups);
+            output.leftClickDelegate=(ClickDelegate)Utilities.Choose(sp1.leftClickDelegate,sp2.leftClickDelegate);
+            output.middleClickDelegate=(ClickDelegate)Utilities.Choose(sp1.middleClickDelegate,sp2.middleClickDelegate);
+            output.rightClickDelegate=(ClickDelegate)Utilities.Choose(sp1.rightClickDelegate,sp2.rightClickDelegate);
+            output.wheelHoverDelegate=(ClickDelegate)Utilities.Choose(sp1.wheelHoverDelegate,sp2.wheelHoverDelegate);
+            output.hoverDelegate=(ClickDelegate)Utilities.Choose(sp1.hoverDelegate,sp2.hoverDelegate);
+            output.spritesDict=(Dictionary<string, SpriteBase>)Utilities.Choose(sp1.spritesDict,sp2.spritesDict);
+            output.dictKey=(string)Utilities.Choose(sp1.dictKey,sp2.dictKey);
+            output.collisionRectangle=(CollisionRectangle)Utilities.Choose(sp1.collisionRectangle,sp2.collisionRectangle);
+
+            return output;
+        }
+        #endregion Operators
     }
 }
