@@ -140,7 +140,7 @@ namespace FCSG{
         /// <summary>
         /// Used to choose between two objects, giving priority to the second one; if o2 is null, o1 is returned, otherwise o2 is returned.
         /// </summary>
-        public static object Choose(object o1,object o2){ //TODO: make this method use generic types
+        public static T Choose<T>(T o1,T o2){ //TODO: make this method use generic types
             if(o2==null){
                 return o1;
             }else{
@@ -351,8 +351,8 @@ namespace FCSG{
         public TextSprite.LayoutMode layoutMode;
         public int offsetX; //Only for TextSprite
         public int offsetY; //Only for TextSprite
-        public IntSpriteObjDelegate originalWidthDelegate; //Only for TextSprite
-        public IntSpriteObjDelegate originalHeightDelegate; //Only for TextSprite
+        public LinkedVariableParams originalWidthVariable; //Only for TextSprite
+        public LinkedVariableParams originalHeightVariable; //Only for TextSprite
         public Wrapper wrapper;
         public float depth;
         public LinkedVariableParams xVariable;
@@ -388,8 +388,8 @@ namespace FCSG{
             TextSprite.LayoutMode layoutMode=TextSprite.LayoutMode.Left, //Only for TextSprite
             int offsetX=0, //Only for TextSprite
             int offsetY=0, //Only for TextSprite
-            IntSpriteObjDelegate originalWidthDelegate=null, //Only for TextSprite
-            IntSpriteObjDelegate originalHeightDelegate=null, //Only for TextSprite
+            LinkedVariableParams originalWidthVariable=null, //Only for TextSprite
+            LinkedVariableParams originalHeightVariable=null, //Only for TextSprite
             Wrapper wrapper=null,
             float depth=0, 
             LinkedVariableParams xVariable=null,
@@ -423,8 +423,8 @@ namespace FCSG{
             this.layoutMode=layoutMode;
             this.offsetX=offsetX;
             this.offsetY=offsetY;
-            this.originalWidthDelegate=originalWidthDelegate;
-            this.originalHeightDelegate=originalHeightDelegate;
+            this.originalWidthVariable=originalWidthVariable;
+            this.originalHeightVariable=originalHeightVariable;
             this.wrapper=wrapper;
             this.depth=depth;
             this.width=width;
@@ -472,39 +472,39 @@ namespace FCSG{
         #region Operators
         public static SpriteParameters operator +(SpriteParameters sp1, SpriteParameters sp2){
             SpriteParameters output=new SpriteParameters();
-            output.spriteBatch=(SpriteBatch)Utilities.Choose(sp1.spriteBatch,sp2.spriteBatch);
-            output.texture=(Texture2D)Utilities.Choose(sp1.texture,sp2.texture);
-            output.font=(SpriteFont)Utilities.Choose(sp1.font,sp2.font);
-            output.text=(string)Utilities.Choose(sp1.text,sp2.text);
-            output.wrapMode=(TextSprite.WrapMode)Utilities.Choose(sp1.wrapMode,sp2.wrapMode);
-            output.layoutMode=(TextSprite.LayoutMode)Utilities.Choose(sp1.layoutMode,sp2.layoutMode);
-            output.offsetX=(int)Utilities.Choose(sp1.offsetX,sp2.offsetX);
-            output.offsetY=(int)Utilities.Choose(sp1.offsetY,sp2.offsetY);
-            output.originalWidthDelegate=(IntSpriteObjDelegate)Utilities.Choose(sp1.originalWidthDelegate,sp2.originalWidthDelegate);
-            output.originalHeightDelegate=(IntSpriteObjDelegate)Utilities.Choose(sp1.originalHeightDelegate,sp2.originalHeightDelegate);
-            output.wrapper=(Wrapper)Utilities.Choose(sp1.wrapper,sp2.wrapper);
-            output.depth=(float)Utilities.Choose(sp1.depth,sp2.depth);
-            output.xVariable=(LinkedVariableParams)Utilities.Choose(sp1.xVariable,sp2.xVariable);
-            output.x=(int?)Utilities.Choose(sp1.x,sp2.x);
-            output.yVariable=(LinkedVariableParams)Utilities.Choose(sp1.yVariable,sp2.yVariable);
-            output.y=(int?)Utilities.Choose(sp1.y,sp2.y);
-            output.widthVariable=(LinkedVariableParams)Utilities.Choose(sp1.widthVariable,sp2.widthVariable);
-            output.width=(int?)Utilities.Choose(sp1.width,sp2.width);
-            output.heightVariable=(LinkedVariableParams)Utilities.Choose(sp1.heightVariable,sp2.heightVariable);
-            output.height=(int?)Utilities.Choose(sp1.height,sp2.height);
-            output.rotation=(float)Utilities.Choose(sp1.rotation,sp2.rotation);
-            output.origin=(Vector2)Utilities.Choose(sp1.origin,sp2.origin);
-            output.color=(Color)Utilities.Choose(sp1.color,sp2.color);
-            output.group=(ObjectGroup<SpriteObject>)Utilities.Choose(sp1.group,sp2.group);
-            output.groups=(List<ObjectGroup<SpriteObject>>)Utilities.Choose(sp1.groups,sp2.groups);
-            output.leftClickDelegate=(ClickDelegate)Utilities.Choose(sp1.leftClickDelegate,sp2.leftClickDelegate);
-            output.middleClickDelegate=(ClickDelegate)Utilities.Choose(sp1.middleClickDelegate,sp2.middleClickDelegate);
-            output.rightClickDelegate=(ClickDelegate)Utilities.Choose(sp1.rightClickDelegate,sp2.rightClickDelegate);
-            output.wheelHoverDelegate=(ClickDelegate)Utilities.Choose(sp1.wheelHoverDelegate,sp2.wheelHoverDelegate);
-            output.hoverDelegate=(ClickDelegate)Utilities.Choose(sp1.hoverDelegate,sp2.hoverDelegate);
-            output.spritesDict=(Dictionary<string, SpriteBase>)Utilities.Choose(sp1.spritesDict,sp2.spritesDict);
-            output.dictKey=(string)Utilities.Choose(sp1.dictKey,sp2.dictKey);
-            output.collisionRectangle=(CollisionRectangle)Utilities.Choose(sp1.collisionRectangle,sp2.collisionRectangle);
+            output.spriteBatch=Utilities.Choose<SpriteBatch>(sp1.spriteBatch,sp2.spriteBatch);
+            output.texture=Utilities.Choose<Texture2D>(sp1.texture,sp2.texture);
+            output.font=Utilities.Choose<SpriteFont>(sp1.font,sp2.font);
+            output.text=Utilities.Choose<string>(sp1.text,sp2.text);
+            output.wrapMode=Utilities.Choose<TextSprite.WrapMode>(sp1.wrapMode,sp2.wrapMode);
+            output.layoutMode=Utilities.Choose<TextSprite.LayoutMode>(sp1.layoutMode,sp2.layoutMode);
+            output.offsetX=Utilities.Choose<int>(sp1.offsetX,sp2.offsetX);
+            output.offsetY=Utilities.Choose<int>(sp1.offsetY,sp2.offsetY);
+            output.originalWidthVariable=Utilities.Choose<LinkedVariableParams>(sp1.originalWidthVariable,sp2.originalWidthVariable);
+            output.originalHeightVariable=Utilities.Choose(sp1.originalHeightVariable,sp2.originalHeightVariable);
+            output.wrapper=Utilities.Choose(sp1.wrapper,sp2.wrapper);
+            output.depth=Utilities.Choose(sp1.depth,sp2.depth);
+            output.xVariable=Utilities.Choose(sp1.xVariable,sp2.xVariable);
+            output.x=Utilities.Choose(sp1.x,sp2.x);
+            output.yVariable=Utilities.Choose(sp1.yVariable,sp2.yVariable);
+            output.y=Utilities.Choose(sp1.y,sp2.y);
+            output.widthVariable=Utilities.Choose(sp1.widthVariable,sp2.widthVariable);
+            output.width=Utilities.Choose(sp1.width,sp2.width);
+            output.heightVariable=Utilities.Choose(sp1.heightVariable,sp2.heightVariable);
+            output.height=Utilities.Choose(sp1.height,sp2.height);
+            output.rotation=Utilities.Choose(sp1.rotation,sp2.rotation);
+            output.origin=Utilities.Choose(sp1.origin,sp2.origin);
+            output.color=Utilities.Choose(sp1.color,sp2.color);
+            output.group=Utilities.Choose(sp1.group,sp2.group);
+            output.groups=Utilities.Choose(sp1.groups,sp2.groups);
+            output.leftClickDelegate=Utilities.Choose(sp1.leftClickDelegate,sp2.leftClickDelegate);
+            output.middleClickDelegate=Utilities.Choose(sp1.middleClickDelegate,sp2.middleClickDelegate);
+            output.rightClickDelegate=Utilities.Choose(sp1.rightClickDelegate,sp2.rightClickDelegate);
+            output.wheelHoverDelegate=Utilities.Choose(sp1.wheelHoverDelegate,sp2.wheelHoverDelegate);
+            output.hoverDelegate=Utilities.Choose(sp1.hoverDelegate,sp2.hoverDelegate);
+            output.spritesDict=Utilities.Choose(sp1.spritesDict,sp2.spritesDict);
+            output.dictKey=Utilities.Choose(sp1.dictKey,sp2.dictKey);
+            output.collisionRectangle=Utilities.Choose(sp1.collisionRectangle,sp2.collisionRectangle);
 
             return output;
         }

@@ -68,6 +68,13 @@ namespace MonogameTests
             Texture2D redl=Content.Load<Texture2D>("redl");
             font=Content.Load<SpriteFont>("FreeSans");
 
+            //Precise texturing test
+            Texture2D precise=Content.Load<Texture2D>("precise");
+            Console.WriteLine("Precise pixel: "+precise.GetPixel(0,0));
+            Console.WriteLine("Precise pixel: "+precise.GetPixel(0,1));
+            Console.WriteLine("Precise pixel: "+precise.GetPixel(1,0));
+            Console.WriteLine("Precise pixel: "+precise.GetPixel(1,1));
+
             group=new ObjectGroup<SpriteObject>();
 
             colorSprite=new Sprite(
@@ -182,7 +189,7 @@ namespace MonogameTests
                 new SpriteParameters(text:"",font:font,spriteBatch:_spriteBatch,
                 widthVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2),
                 heightVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2),
-                wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>2000,depth:1f)
+                wrapMode:TextSprite.WrapMode.Word,originalHeightVariable:new LinkedVariableParams((SpriteBase sprite)=>2000),originalWidthVariable:new LinkedVariableParams((SpriteBase sprite)=>2000),depth:1f)
             );
 
             //TextSprite texto=new TextSprite("AaaaaaaaaaaaaaaaAAAAAAAAAAAAAaaaaaaaaaaaaaaaAAAaaaa",font,_spriteBatch,widthDelegate:(SpriteObject sprite)=>400,heightDelegate:(SpriteObject sprite)=>400,wrapMode:TextSprite.WrapMode.Word,originalHeightDelegate:(SpriteObject sprite)=>2000,originalWidthDelegate:(SpriteObject sprite)=>1000);
