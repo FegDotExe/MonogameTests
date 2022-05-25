@@ -171,6 +171,9 @@ namespace FCSG{
             this.yVariable.Activate();
             this.widthVariable.Activate();
             this.heightVariable.Activate();
+            if(this.collisionRectangle.sprite==null){
+                this.collisionRectangle.Activate(this);
+            }
 
             this.draw=true;
         }

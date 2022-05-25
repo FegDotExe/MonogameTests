@@ -274,55 +274,101 @@ namespace FCSG{
     /// A class which represents a sprite's collision box. It was created so that delegates can be used to handle collisions. It can cast implicitly to a rectangle.
     /// </summary>
     public class CollisionRectangle{
-        private IntSpriteBaseDelegate xDelegate;
-        private IntSpriteBaseDelegate yDelegate;
-        private IntSpriteBaseDelegate widthDelegate;
-        private IntSpriteBaseDelegate heightDelegate;
-        private SpriteBase sprite; //The sprite which this collision rectangle is associated with
+        private LinkedVariable xVariable;
+        private LinkedVariable yVariable;
+        private LinkedVariable widthVariable;
+        private LinkedVariable heightVariable;
+        public SpriteBase sprite; //The sprite which this collision rectangle is associated with
 
         public int x{
             get{
-                return xDelegate(sprite);
+                return xVariable;
             }
         }
         public int y{
             get{
-                return yDelegate(sprite);
+                return yVariable;
             }
         }
         public int width{
             get{
-                return widthDelegate(sprite);
+                return widthVariable;
             }
         }
         public int height{
             get{
-                return heightDelegate(sprite);
+                return heightVariable;
             }
         }
 
-        public CollisionRectangle(SpriteBase sprite, IntSpriteBaseDelegate xDelegate, IntSpriteBaseDelegate yDelegate, IntSpriteBaseDelegate widthDelegate, IntSpriteBaseDelegate heightDelegate){
-            this.sprite=sprite;
-            this.xDelegate=xDelegate;
-            this.yDelegate=yDelegate;
-            this.widthDelegate=widthDelegate;
-            this.heightDelegate=heightDelegate;
+        #region Constructors
+        /// <summary>
+        /// Construct a new CollisionRectangle with the given settings. It will need to be activated with CollisionRectangle.Activate() in order for it to work.
+        /// </summary>
+        public CollisionRectangle(LinkedVariableParams xVariable=null, LinkedVariableParams yVariable=null, LinkedVariableParams widthVariable=null, LinkedVariableParams heightVariable=null){
+            if(xVariable!=null){
+                this.xVariable=new LinkedVariable(this.sprite,xVariable);
+            }else
+                this.xVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.x, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.xVariable})); //TODO: add a way to choose wether the coords are relative or not to the sprite.
+            if(yVariable!=null){
+                this.yVariable=new LinkedVariable(this.sprite,yVariable);
+            }else
+                this.yVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.y, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.yVariable}));
+            if(widthVariable!=null){
+                this.widthVariable=new LinkedVariable(widthVariable);
+            }else
+                this.widthVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.width, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.widthVariable}));
+            if(heightVariable!=null){
+                this.heightVariable=new LinkedVariable(heightVariable);
+            }else
+                this.heightVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.height, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.heightVariable}));
         }
-        public CollisionRectangle(IntSpriteBaseDelegate xDelegate, IntSpriteBaseDelegate yDelegate, IntSpriteBaseDelegate widthDelegate, IntSpriteBaseDelegate heightDelegate){
-            this.xDelegate=xDelegate;
-            this.yDelegate=yDelegate;
-            this.widthDelegate=widthDelegate;
-            this.heightDelegate=heightDelegate;
+
+        public CollisionRectangle(LinkedVariable xVariable, LinkedVariable yVariable, LinkedVariable widthVariable, LinkedVariable heightVariable){
+            this.xVariable=xVariable;
+            this.yVariable=yVariable;
+            this.widthVariable=widthVariable;
+            this.heightVariable=heightVariable;
         }
         /// <summary>
         /// Construct a collision rectangle with values corresponding to the ones of the sprite.
         /// </summary>
         public CollisionRectangle(SpriteBase sprite){
             this.sprite=sprite;
-            this.xDelegate=(SpriteBase sprite)=>sprite.x; //TODO: add a way to choose wether the coords are relative or not to the sprite.
-            this.yDelegate=(SpriteBase sprite)=>sprite.y;
-            this.widthDelegate=(SpriteBase sprite)=>sprite.width;
-            this.heightDelegate=(SpriteBase sprite)=>sprite.height;
+            this.xVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.x, new LinkedVariable[] {sprite.xVariable}); //TODO: add a way to choose wether the coords are relative or not to the sprite.
+            this.yVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.y, new LinkedVariable[] {sprite.yVariable});
+            this.widthVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.width, new LinkedVariable[] {sprite.widthVariable});
+            this.heightVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.height, new LinkedVariable[] {sprite.heightVariable});
+        }
+        public CollisionRectangle(SpriteBase sprite, LinkedVariable xVariable=null, LinkedVariable yVariable=null, LinkedVariable widthVariable=null, LinkedVariable heightVariable=null){
+            if(sprite!=null){
+                this.sprite=sprite;
+            }
+            if(xVariable!=null){
+                this.xVariable=xVariable;
+            }else
+                this.xVariable=new LinkedVariable(this.sprite,(SpriteBase sprite)=>(int)sprite.x, new LinkedVariable[] {sprite.xVariable}); //TODO: add a way to choose wether the coords are relative or not to the sprite.
+            if(yVariable!=null){
+                this.yVariable=yVariable;
+            }else
+                this.yVariable=new LinkedVariable(this.sprite,(SpriteBase sprite)=>(int)sprite.y, new LinkedVariable[] {sprite.yVariable});
+            if(widthVariable!=null){
+                this.widthVariable=widthVariable;
+            }else
+                this.widthVariable=new LinkedVariable(this.sprite,(SpriteBase sprite)=>(int)sprite.width, new LinkedVariable[] {sprite.widthVariable});
+            if(heightVariable!=null){
+                this.heightVariable=heightVariable;
+            }else
+                this.heightVariable=new LinkedVariable(this.sprite,(SpriteBase sprite)=>(int)sprite.height, new LinkedVariable[] {sprite.heightVariable});
+        }
+        #endregion Constructors
+
+        public void Activate(SpriteBase sb){
+            this.sprite=sb;
+            this.xVariable.Activate(sb);
+            this.yVariable.Activate(sb);
+            this.widthVariable.Activate(sb);
+            this.heightVariable.Activate(sb);
         }
 
         public void SetSprite(SpriteBase sprite){
@@ -330,7 +376,7 @@ namespace FCSG{
         }
 
         /// <summary>
-        /// Returns true if the given point is inside the collision rectangle.
+        /// Returns true if the given point is inside the collision rectangle. It is not relative to the rectangle.
         /// </summary>
         public bool CollidesWith(int x,int y){
             return x>=this.x && x<=this.x+this.width && y>=this.y && y<=this.y+this.height;

@@ -183,12 +183,38 @@ namespace FCSG{
                 this.linkedVariablesDelegate=parameters.linkedVariableDelegate;
             }
         }
+
+        //With settings but without SpriteBase
+        /// <summary>
+        /// Creates a LinkedVariable with the given settings; the variable will then need to be activated using Activate(SpriteBase) in order for variables to link correctly
+        /// </summary>
+        public LinkedVariable(LinkedVariableParams parameters){
+            // linkedVariables=new List<LinkedVariable>();
+            this.objectDelegate=parameters.objectDelegate;
+            // _value=objectDelegate(spriteBase);
+            // FixValue();
+            if(parameters.sensitiveVariables!=null){
+                this.linkedVariablesDelegate=(SpriteBase sb)=>parameters.sensitiveVariables;
+            }else if(parameters.linkedVariableDelegate!=null){
+                this.linkedVariablesDelegate=parameters.linkedVariableDelegate;
+            }
+        }
         #endregion Constructors
 
         ///<summary>
         ///Links this to the LinkedVariables it should be linked to. Is used to link everything once it is sure that values are not null. It uses the linkedVariablesDelegate to get the linked variables
         ///</summary>
         public void Activate(){
+            foreach(LinkedVariable sv in linkedVariablesDelegate(spriteBase)){
+                LinkTo(sv);
+            }
+        }
+
+        ///<summary>
+        ///Links this to the LinkedVariables it should be linked to. Is used to link everything once it is sure that values are not null. It uses the linkedVariablesDelegate to get the linked. This overload of activate also links a new SpriteBase.
+        ///</summary>
+        public void Activate(SpriteBase sb){
+            this.spriteBase=sb;
             foreach(LinkedVariable sv in linkedVariablesDelegate(spriteBase)){
                 LinkTo(sv);
             }

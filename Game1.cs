@@ -137,8 +137,13 @@ namespace MonogameTests
                 heightVariable:new LinkedVariableParams((SpriteBase so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
                 spritesDict: spriteDict,
                 dictKey: "chess",
-                leftClickDelegate: (SpriteBase sb, int x, int y)=>false)
-            ));
+                leftClickDelegate: (SpriteBase sb, int x, int y)=>{
+                    Console.WriteLine("Clicked on chess");
+                    return false;
+                }
+                ,collisionRectangle: new CollisionRectangle(xVariable:new LinkedVariableParams((SpriteBase sb)=>sb.x+(sb.width/2),sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.xVariable,sb.widthVariable})))
+                )
+            );
 
             int x_pos=3;
             int y_pos=3;
