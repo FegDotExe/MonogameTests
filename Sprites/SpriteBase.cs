@@ -52,6 +52,7 @@ namespace FCSG{
             public ClickDelegate rightClickDelegate;
             public ClickDelegate wheelHoverDelegate;
             public ClickDelegate hoverDelegate;
+        protected bool precise;
 
         protected CollisionRectangle collisionRectangle; //A rectangle used for collision detection. its coordinates are relative to the sprite's position, and so is the size.
         #endregion Fields
@@ -154,6 +155,7 @@ namespace FCSG{
                 this.rightClickDelegate = spriteParameters.rightClickDelegate;
                 this.wheelHoverDelegate = spriteParameters.wheelHoverDelegate;
                 this.hoverDelegate = spriteParameters.hoverDelegate;
+            this.precise=spriteParameters.precise;
 
             //Collision rectangle
             if(spriteParameters.collisionRectangle==null){
@@ -183,7 +185,7 @@ namespace FCSG{
         }
 
         /// <summary>
-        /// 
+        /// The bare skeleton of the draw method. Should be used in every context in which a custom spriteBatch is used (== everywhere except in Wrapper)
         /// </summary>
         public virtual void BasicDraw(SpriteBatch spriteBatch, bool drawMiddle=true){
             if(drawMiddle==true){
@@ -224,7 +226,7 @@ namespace FCSG{
         ///Checks if the sprite is colliding with another sprite and triggers the right click delegate.
         ///</summary>
         public bool Clicked(int x, int y, Clicks clickType){
-            if(this.CollidesWith(x,y)){
+            if((!precise && this.CollidesWith(x,y))||(precise && this.CollidesWith(x,y) && this.IsolateTexture().GetPixel(x,y).A!=0)){ //TODO: a complete resize is needed: there should be a rendertarget to test for precise click.
                 switch(clickType){
                     case Clicks.Left:
                         if(leftClickDelegate!=null){
@@ -254,6 +256,15 @@ namespace FCSG{
                 }
             }
             return true;
+        }
+
+        ///<summary>
+        ///Draws this and only this texture to a new texture of the size of the screen.
+        ///</summary>
+        private Texture2D IsolateTexture(){
+            RenderTarget2D renderTarget=new RenderTarget2D(spriteBatch.GraphicsDevice,spriteBatch.GraphicsDevice.Viewport.Width,spriteBatch.GraphicsDevice.Viewport.Width);
+            Utilities.DrawOntoTarget(renderTarget,this,spriteBatch);
+            return renderTarget;
         }
     }
 }

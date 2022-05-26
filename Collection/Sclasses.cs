@@ -24,6 +24,8 @@ namespace FCSG{
                     // if(spriteBase!=null){
                     //     Console.WriteLine("Accessed delegate ("+objectDelegate(spriteBase)+"); sprite is "+spriteBase.name);
                     // }
+                    _value=objectDelegate(spriteBase);//HACK: RANDOM ADDITION SEE IF THIS ACTUALLY WORKS
+                    updating=false;
                     return objectDelegate(spriteBase);
                 }
             }

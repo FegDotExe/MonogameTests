@@ -127,7 +127,7 @@ namespace MonogameTests
             resizeVariableW=new LinkedVariable(null, (SpriteBase sb)=>GraphicsDevice.Viewport.Width);
             resizeVariableH=new LinkedVariable(null, (SpriteBase sb)=>GraphicsDevice.Viewport.Height);
 
-            wrapper.Add(new Sprite(
+            wrapper.Add(new Sprite( //FIXME: uncomment
                 new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:chessTextureGenerator.Generate(),
                 depth:0.1f,
@@ -138,33 +138,36 @@ namespace MonogameTests
                 spritesDict: spriteDict,
                 dictKey: "chess",
                 leftClickDelegate: (SpriteBase sb, int x, int y)=>{
-                    Console.WriteLine("Clicked on chess");
+                    Console.WriteLine("Clicked on chess: x="+x+", y="+y);
                     return false;
                 }
-                ,collisionRectangle: new CollisionRectangle(xVariable:new LinkedVariableParams((SpriteBase sb)=>sb.x+(sb.width/2),sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.xVariable,sb.widthVariable})))
-                )
-            );
-
-            int x_pos=3;
-            int y_pos=3;
-            wrapper.Add(new Sprite(
-                new SpriteParameters(spriteBatch:_spriteBatch,
-                texture:white,
-                depth:0.11f,
-                xVariable:new LinkedVariableParams(
-                    (SpriteBase sb)=>Math.Round((double)((int)spriteDict["chess"].x+((((double)spriteDict["chess"].width)/(double)x_chess)*x_pos))), 
-                    new LinkedVariable[] {spriteDict["chess"].xVariable}
-                ),
-                yVariable:new LinkedVariableParams(
-                    (SpriteBase sb)=>(int)Math.Round((double)(spriteDict["chess"].height+spriteDict["chess"].y-sb.height-((((double)spriteDict["chess"].width)/(double)x_chess)*y_pos))),
-                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["chess"].yVariable,sb.heightVariable}
-                ),
-                widthVariable:new LinkedVariableParams((SpriteBase so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)x_chess),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
-                heightVariable:new LinkedVariableParams((SpriteBase so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)y_chess),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
-                spritesDict: spriteDict,
-                dictKey: "cock"
+                ,collisionRectangle: new CollisionRectangle(
+                    xVariable:new LinkedVariableParams((SpriteBase sb)=>sb.x+(sb.width/2),sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.xVariable,sb.widthVariable}),
+                    widthVariable: new LinkedVariableParams((SpriteBase sb)=>sb.width-(sb.width/2),sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.widthVariable})),
+                precise:true
                 )
             ));
+
+            // int x_pos=3; //FIXME: uncomment
+            // int y_pos=3;
+            // wrapper.Add(new Sprite(
+            //     new SpriteParameters(spriteBatch:_spriteBatch,
+            //     texture:white,
+            //     depth:0.11f,
+            //     xVariable:new LinkedVariableParams(
+            //         (SpriteBase sb)=>Math.Round((double)((int)spriteDict["chess"].x+((((double)spriteDict["chess"].width)/(double)x_chess)*x_pos))), 
+            //         new LinkedVariable[] {spriteDict["chess"].xVariable}
+            //     ),
+            //     yVariable:new LinkedVariableParams(
+            //         (SpriteBase sb)=>(int)Math.Round((double)(spriteDict["chess"].height+spriteDict["chess"].y-sb.height-((((double)spriteDict["chess"].width)/(double)x_chess)*y_pos))),
+            //         sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["chess"].yVariable,sb.heightVariable}
+            //     ),
+            //     widthVariable:new LinkedVariableParams((SpriteBase so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)x_chess),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+            //     heightVariable:new LinkedVariableParams((SpriteBase so)=>(int)Math.Round(((double)spriteDict["chess"].width)/(double)y_chess),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+            //     spritesDict: spriteDict,
+            //     dictKey: "cock"
+            //     )
+            // ));
 
             // Example of surface-draw->way to create new 2d texture
             // Methods.createGrid(100,100,blue,GraphicsDevice,spriteGroup:group,_spriteBatch);
@@ -175,7 +178,7 @@ namespace MonogameTests
             randomSprite=new Sprite(new SpriteParameters(_spriteBatch,red,
                 widthVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
                 heightVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
-                xVariable:new LinkedVariableParams((SpriteBase sprite)=>x), //This sets the thing to literally be another LinkedList, so that it updates when it is needed to
+                xVariable:new LinkedVariableParams((SpriteBase sprite)=>(int)x,new LinkedVariable[] {x}), //This sets the thing to literally be another LinkedList, so that it updates when it is needed to
                 yVariable:new LinkedVariableParams((SpriteBase sprite)=>(int)y,new LinkedVariable[] {y}), //This is just another way to do the same exact thing
                 leftClickDelegate:(SpriteBase sprite, int x, int y)=>{
                     if(randomSprite.texture==red){
@@ -188,6 +191,7 @@ namespace MonogameTests
                 spritesDict: spriteDict,
                 dictKey:"bigSquare")
             );
+
             wrapper.Add(randomSprite);
 
             texto=new TextSprite(

@@ -37,29 +37,15 @@ namespace FCSG{
     public class Utilities{
 
         /// <summary>
-        /// Draws the given Object2Ds on the target.
-        /// </summary>
-        public static void DrawOntoTarget(RenderTarget2D renderTarget, ObjectGroup<Object2D> group, SpriteBatch spriteBatch){
-            spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
-            spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional
-
-            spriteBatch.Begin(samplerState:SamplerState.PointClamp);//TODO: add spriteBatch settings
-            group.PerformOnAll((Object2D obj)=>{
-                obj.Draw(drawMiddle:false);
-            });
-            spriteBatch.End();
-            spriteBatch.GraphicsDevice.SetRenderTarget(null);
-        }
-        /// <summary>
         /// Draws the given sprite on the target.
         /// </summary>
-        public static void DrawOntoTarget(RenderTarget2D renderTarget, SpriteObject spriteObject, SpriteBatch spriteBatch){
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, SpriteBase sprite, SpriteBatch spriteBatch){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
 
             spriteBatch.Begin(samplerState:SamplerState.PointClamp);
-            spriteObject.Draw(drawMiddle:false);
+            sprite.BasicDraw(spriteBatch,drawMiddle:false);
             spriteBatch.End();
 
             spriteBatch.GraphicsDevice.SetRenderTarget(null);
@@ -309,19 +295,19 @@ namespace FCSG{
             if(xVariable!=null){
                 this.xVariable=new LinkedVariable(this.sprite,xVariable);
             }else
-                this.xVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.x, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.xVariable})); //TODO: add a way to choose wether the coords are relative or not to the sprite.
+                this.xVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.x, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.xVariable})); //TODO: add a way to choose wether the coords are relative or not to the sprite.
             if(yVariable!=null){
                 this.yVariable=new LinkedVariable(this.sprite,yVariable);
             }else
-                this.yVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.y, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.yVariable}));
+                this.yVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.y, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.yVariable}));
             if(widthVariable!=null){
                 this.widthVariable=new LinkedVariable(widthVariable);
             }else
-                this.widthVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.width, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.widthVariable}));
+                this.widthVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.width, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.widthVariable}));
             if(heightVariable!=null){
                 this.heightVariable=new LinkedVariable(heightVariable);
             }else
-                this.heightVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.height, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sprite.heightVariable}));
+                this.heightVariable=new LinkedVariable(new LinkedVariableParams((SpriteBase sb)=>(int)sb.height, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.heightVariable}));
         }
 
         public CollisionRectangle(LinkedVariable xVariable, LinkedVariable yVariable, LinkedVariable widthVariable, LinkedVariable heightVariable){
@@ -335,10 +321,10 @@ namespace FCSG{
         /// </summary>
         public CollisionRectangle(SpriteBase sprite){
             this.sprite=sprite;
-            this.xVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.x, new LinkedVariable[] {sprite.xVariable}); //TODO: add a way to choose wether the coords are relative or not to the sprite.
-            this.yVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.y, new LinkedVariable[] {sprite.yVariable});
-            this.widthVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.width, new LinkedVariable[] {sprite.widthVariable});
-            this.heightVariable=new LinkedVariable(sprite,(SpriteBase sprite)=>(int)sprite.height, new LinkedVariable[] {sprite.heightVariable});
+            this.xVariable=new LinkedVariable(this.sprite,(SpriteBase sb)=>this.sprite.xVariable,new LinkedVariable[] {this.sprite.xVariable});
+            this.yVariable=sprite.yVariable;
+            this.widthVariable=sprite.widthVariable;
+            this.heightVariable=sprite.heightVariable;
         }
         public CollisionRectangle(SpriteBase sprite, LinkedVariable xVariable=null, LinkedVariable yVariable=null, LinkedVariable widthVariable=null, LinkedVariable heightVariable=null){
             if(sprite!=null){
@@ -422,6 +408,7 @@ namespace FCSG{
         public Dictionary<string, SpriteBase> spritesDict;
         public string dictKey;
         public CollisionRectangle collisionRectangle;
+        public bool precise; //Wether clicks should be pixel-precise or not.
 
         #endregion Fields
         #region Constructor
@@ -456,6 +443,7 @@ namespace FCSG{
             ClickDelegate rightClickDelegate=null,
             ClickDelegate wheelHoverDelegate=null,
             ClickDelegate hoverDelegate=null,
+            bool precise=false,
             Dictionary<string, SpriteBase> spritesDict=null,
             string dictKey=null,
             CollisionRectangle collisionRectangle=null
@@ -498,6 +486,7 @@ namespace FCSG{
                 this.rightClickDelegate = rightClickDelegate;
                 this.wheelHoverDelegate = wheelHoverDelegate;
                 this.hoverDelegate = hoverDelegate;
+            this.precise=precise;
 
             //Origin
             if(origin!=null){
