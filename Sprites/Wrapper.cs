@@ -14,10 +14,15 @@ namespace FCSG{
         public LayerGroup wheelHover;
         public LayerGroup hover;
 
-        private int clickLayerCounter;
+        private SpriteBatchParameters spriteBatchParams;
 
-        public Wrapper(SpriteBatch spriteBatch){
+        public Wrapper(SpriteBatch spriteBatch, SpriteBatchParameters spriteBatchParams=null){
             this.spriteBatch = spriteBatch;
+            if(this.spriteBatchParams==null){
+                this.spriteBatchParams=new SpriteBatchParameters(sortMode:SpriteSortMode.FrontToBack,samplerState:SamplerState.PointClamp);
+            }else{
+                this.spriteBatchParams=spriteBatchParams;
+            }
             sprites = new List<SpriteObject>();
             leftClick = new LayerGroup();
             middleClick = new LayerGroup();
@@ -92,7 +97,8 @@ namespace FCSG{
         }
 
         public void Draw(){
-            spriteBatch.Begin(sortMode:SpriteSortMode.FrontToBack,samplerState:SamplerState.PointClamp); //TODO: Should add options
+            //spriteBatch.Begin(sortMode:SpriteSortMode.FrontToBack,samplerState:SamplerState.PointClamp); //TODO: Should add options
+            spriteBatch.Begin(this.spriteBatchParams);
             foreach(SpriteObject sprite in sprites){
                 sprite.Draw();
             }

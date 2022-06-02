@@ -77,6 +77,11 @@ namespace FCSG{
         ){
             this.font = spriteParameters.font;
             this._text = spriteParameters.text;// Private reference is used so that the texture isn't elaborated before it can be
+            
+            if(this.font==null || this._text==null){
+                throw new ArgumentException("The font or text of the sprite is null");
+            }
+            
             if(spriteParameters.originalHeightVariable!=null)
                 this.originalHeightVariable = new LinkedVariable(this,spriteParameters.originalHeightVariable);
             else

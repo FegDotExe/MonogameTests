@@ -205,10 +205,10 @@ namespace FCSG{
 
             //Click delegates
                 this._leftClickDelegate = spriteParameters.leftClickDelegate;
-                this.middleClickDelegate = spriteParameters.middleClickDelegate;
-                this.rightClickDelegate = spriteParameters.rightClickDelegate;
-                this.wheelHoverDelegate = spriteParameters.wheelHoverDelegate;
-                this.hoverDelegate = spriteParameters.hoverDelegate;
+                this._middleClickDelegate = spriteParameters.middleClickDelegate;
+                this._rightClickDelegate = spriteParameters.rightClickDelegate;
+                this._wheelHoverDelegate = spriteParameters.wheelHoverDelegate;
+                this._hoverDelegate = spriteParameters.hoverDelegate;
                 
                 this.precise=spriteParameters.precise;
 

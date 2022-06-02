@@ -15,6 +15,10 @@ namespace FCSG{
         ){
             this.texture = spriteParameters.texture;
 
+            if(this.texture==null){
+                throw new ArgumentException(message: "The texture of the sprite is null");
+            }
+
             // All this stuff is already handled in SpriteBase
             // if(group!=null){ //Adds the sprite to the group
             //     this.groups.Add(group);
