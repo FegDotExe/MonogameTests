@@ -5,6 +5,7 @@ namespace FCSG{
     /// A class which stores sprites in a list, keeping them ordered by their depth or by a custom delegate, with the ones with higher values in front
     /// </summary>
     public class LayerGroup{
+        public int? layerCount=null;
         public List<SpriteBase> objects;
         private DoubleSpriteBaseDelegate comparer;
         /// <summary>
@@ -26,6 +27,9 @@ namespace FCSG{
         /// </summary>
         public void Add(SpriteBase sprite){
             this.Add(sprite,this.objects);
+            if(layerCount!=null && (sprite==objects[(int)layerCount]||objects.IndexOf(sprite)<(int)layerCount)){ //The "if" is placed after the addition so that objects.IndexOf(sprite) works without trouble
+                layerCount++;
+            }
         }
         private void Add(SpriteBase sprite, List<SpriteBase> objects){
             if(objects.Count==0){
@@ -48,6 +52,9 @@ namespace FCSG{
         /// Removes the given sprite from the LayerGroup
         /// </summary>
         public void Remove(SpriteBase sprite){
+            if(layerCount!=null && (sprite==objects[(int)layerCount]||objects.IndexOf(sprite)<(int)layerCount)){
+                layerCount--;
+            }
             objects.Remove(sprite);
         }
 
@@ -60,6 +67,10 @@ namespace FCSG{
                 this.Add(sprite,newObjects);
             }
             objects=newObjects;
+        }
+
+        public static implicit operator List<SpriteBase>(LayerGroup group){
+            return group.objects;
         }
     }
 }

@@ -42,6 +42,23 @@ namespace FCSG{
 
         #endregion Fields
         #region Constructor
+        /// <param name="depth">The depth of the sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0.</param>
+        /// <param name="xDelegate">The delegate which returns the x position of the sprite.</param>
+        /// <param name="yDelegate">The delegate which returns the y position of the sprite.</param>
+        /// <param name="widthDelegate">The delegate which returns the width of the sprite.</param>
+        /// <param name="heightDelegate">The delegate which returns the height of the sprite.</param>
+        /// <param name="rotation">The rotation of the sprite. (I should probably not touch this)</param>
+        /// <param name="origin">The origin of the sprite. (I should probably not touch this)</param>
+        /// <param name="color">The color of the sprite.</param>
+        /// <param name="group">A group to which the sprite will be added when constructed.</param>
+        /// <param name="groups">A list of groups to which the sprite will be added when constructed.</param>
+        /// <param name="leftClickDelegate">The delegate which will be called when the sprite is clicked with the left mouse button.</param>
+        /// <param name="middleClickDelegate">The delegate which will be called when the sprite is clicked with the middle mouse button.</param>
+        /// <param name="rightClickDelegate">The delegate which will be called when the sprite is clicked with the right mouse button.</param>
+        /// <param name="wheelHoverDelegate">The delegate which will be called when the scrolls.</param>
+        /// <param name="hoverDelegate">The delegate which will be called when the mouse is over the sprite.</param>
+        /// <param name="spritesDict">A dictionary to which the sprite will be added once constructed.</param>
+        /// <param name="dictKey">The key the dictionary will use when inserted in the <c>spritesDict</c></param>
         public SpriteParameters(
             SpriteBatch spriteBatch=null,
             Texture2D texture=null, //Only for Sprite

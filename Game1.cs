@@ -58,6 +58,8 @@ namespace MonogameTests
             spriteDict = new Dictionary<string, SpriteBase>();
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            SpriteParameters defaultParameters=new SpriteParameters(spriteBatch:_spriteBatch);
+
             wrapper=new Wrapper(_spriteBatch);
 
             totem_of_time=Content.Load<Texture2D>("assets/totem_of_time");
@@ -99,7 +101,7 @@ namespace MonogameTests
 
             LayerGroup group2=new LayerGroup();
 
-            int x_chess=10;
+            int x_chess=10; //FIXME: uncomment this
             int y_chess=10;
             RenderTarget2D chessThing=new RenderTarget2D(GraphicsDevice,16*x_chess,16*y_chess);
             for(int i=0; i<x_chess;i++){
@@ -127,7 +129,7 @@ namespace MonogameTests
             resizeVariableW=new LinkedVariable(null, (SpriteBase sb)=>GraphicsDevice.Viewport.Width);
             resizeVariableH=new LinkedVariable(null, (SpriteBase sb)=>GraphicsDevice.Viewport.Height);
 
-            wrapper.Add(new Sprite( //FIXME: uncomment
+            wrapper.Add(new Sprite( //FIXME: uncomment this
                 new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:chessTextureGenerator.Generate(),
                 depth:0.1f,
@@ -139,6 +141,10 @@ namespace MonogameTests
                 dictKey: "chess",
                 leftClickDelegate: (SpriteBase sb, int x, int y)=>{
                     Console.WriteLine("Clicked on chess: x="+x+", y="+y);
+                    spriteDict["bigSquare"].leftClickDelegate= (SpriteBase sb, int x, int y)=>{
+                        Console.WriteLine("New click on bigSquare");
+                        return false;
+                    };
                     return false;
                 }
                 ,collisionRectangle: new CollisionRectangle(
@@ -186,6 +192,7 @@ namespace MonogameTests
                     }else{
                         randomSprite.texture=red;
                     }
+                    sprite.leftClickDelegate=null;
                     return true;
                 }, 
                 spritesDict: spriteDict,
@@ -193,6 +200,34 @@ namespace MonogameTests
             );
 
             wrapper.Add(randomSprite);
+
+            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
+                texture:white,
+                yVariable:new LinkedVariableParams(
+                    (SpriteBase sb)=>spriteDict["bigSquare"].x,
+                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["bigSquare"].xVariable}),
+                    spritesDict: spriteDict,
+                    dictKey: "test1"
+            )));
+            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
+                texture:white,
+                xVariable:new LinkedVariableParams(
+                    (SpriteBase sb)=>spriteDict["test1"].y,
+                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["test1"].yVariable}),
+                    spritesDict: spriteDict,
+                    dictKey: "test2"
+            )));
+            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
+                texture:white,
+                xVariable:new LinkedVariableParams(
+                    (SpriteBase sb)=>spriteDict["bigSquare"].x,
+                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["bigSquare"].xVariable}),
+                yVariable:new LinkedVariableParams(
+                    (SpriteBase sb)=>spriteDict["test2"].x,
+                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["test2"].xVariable}),
+                spritesDict: spriteDict,
+                dictKey: "test3"
+            )));
 
             texto=new TextSprite(
                 new SpriteParameters(text:"",font:font,spriteBatch:_spriteBatch,

@@ -14,6 +14,8 @@ namespace FCSG{
         public LayerGroup wheelHover;
         public LayerGroup hover;
 
+        private int clickLayerCounter;
+
         public Wrapper(SpriteBatch spriteBatch){
             this.spriteBatch = spriteBatch;
             sprites = new List<SpriteObject>();
@@ -98,31 +100,36 @@ namespace FCSG{
         }
     
         public void Click(Clicks click,int x, int y){
-            List<SpriteBase> layers=null;
+            LayerGroup layers=null;
             switch(click){
                 case Clicks.Left:
-                    layers=leftClick.objects;
+                    layers=leftClick;
                     break;
                 case Clicks.Middle:
-                    layers=middleClick.objects;
+                    layers=middleClick;
                     break;
                 case Clicks.Right:
-                    layers=rightClick.objects;
+                    layers=rightClick;
                     break;
                 case Clicks.WheelHover:
-                    layers=wheelHover.objects;
+                    layers=wheelHover;
                     break;
                 case Clicks.Hover:
-                    layers=hover.objects;
+                    layers=hover;
                     break;
             }
             bool nextElement=true;
-            foreach(SpriteBase sprite in layers){
+            
+            layers.layerCount=0;
+            while(layers.layerCount<layers.objects.Count){
+                SpriteBase sprite=((List<SpriteBase>)layers)[(int)layers.layerCount];
                 nextElement=sprite.Clicked(x,y,click); //Everything should be correctly handled in each sprite
                 if(!nextElement){
                     break;
                 }
+                layers.layerCount++;
             }
+            layers.layerCount=null; //Sets layerCount back to null so that it isn't considered in eventual other chunks of code
         }
     }
 }

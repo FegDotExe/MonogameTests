@@ -47,39 +47,93 @@ namespace FCSG{
         public Wrapper wrapper; //The wrapper which contains the sprite
         protected List<ObjectGroup<SpriteObject>> groups{get;set;}
         //Click delegates
-            public ClickDelegate leftClickDelegate;
-            public ClickDelegate middleClickDelegate;
-            public ClickDelegate rightClickDelegate;
-            public ClickDelegate wheelHoverDelegate;
-            public ClickDelegate hoverDelegate;
+            #region ClickDelegates
+            protected ClickDelegate _leftClickDelegate;
+            public ClickDelegate leftClickDelegate{
+                get{
+                    return _leftClickDelegate;
+                }
+                set{
+                    _leftClickDelegate = value;
+                    if(value!=null){
+                        wrapper.leftClick.Add(this);
+                    }else{
+                        wrapper.leftClick.Remove(this);
+                    }
+                }
+            }
+            protected ClickDelegate _middleClickDelegate;
+            public ClickDelegate middleClickDelegate{
+                get{
+                    return _middleClickDelegate;
+                }
+                set{
+                    _middleClickDelegate = value;
+                    if(value!=null){
+                        wrapper.middleClick.Add(this);
+                    }else{
+                        wrapper.middleClick.Remove(this);
+                    }
+                }
+            }
+            protected ClickDelegate _rightClickDelegate;
+            public ClickDelegate rightClickDelegate{
+                get{
+                    return _rightClickDelegate;
+                }
+                set{
+                    _rightClickDelegate = value;
+                    if(value!=null){
+                        wrapper.rightClick.Add(this);
+                    }else{
+                        wrapper.rightClick.Remove(this);
+                    }
+                }
+            }
+            protected ClickDelegate _wheelHoverDelegate;
+            public ClickDelegate wheelHoverDelegate{
+                get{
+                    return _wheelHoverDelegate;
+                }
+                set{
+                    _wheelHoverDelegate = value;
+                    if(value!=null){
+                        wrapper.wheelHover.Add(this);
+                    }else{
+                        wrapper.wheelHover.Remove(this);
+                    }
+                }
+            }
+            protected ClickDelegate _hoverDelegate;
+            public ClickDelegate hoverDelegate{
+                get{
+                    return _hoverDelegate;
+                }
+                set{
+                    _hoverDelegate = value;
+                    if(value!=null){
+                        wrapper.hover.Add(this);
+                    }else{
+                        wrapper.hover.Remove(this);
+                    }
+                }
+            }
+            #endregion ClickDelegates
         protected bool precise;
 
         protected CollisionRectangle collisionRectangle; //A rectangle used for collision detection. its coordinates are relative to the sprite's position, and so is the size.
         #endregion Fields
         #region Constructors
-        /// <param name="depth">The depth of the sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0.</param>
-        /// <param name="xDelegate">The delegate which returns the x position of the sprite.</param>
-        /// <param name="yDelegate">The delegate which returns the y position of the sprite.</param>
-        /// <param name="widthDelegate">The delegate which returns the width of the sprite.</param>
-        /// <param name="heightDelegate">The delegate which returns the height of the sprite.</param>
-        /// <param name="rotation">The rotation of the sprite. (I should probably not touch this)</param>
-        /// <param name="origin">The origin of the sprite. (I should probably not touch this)</param>
-        /// <param name="color">The color of the sprite.</param>
-        /// <param name="group">A group to which the sprite will be added when constructed.</param>
-        /// <param name="groups">A list of groups to which the sprite will be added when constructed.</param>
-        /// <param name="leftClickDelegate">The delegate which will be called when the sprite is clicked with the left mouse button.</param>
-        /// <param name="middleClickDelegate">The delegate which will be called when the sprite is clicked with the middle mouse button.</param>
-        /// <param name="rightClickDelegate">The delegate which will be called when the sprite is clicked with the right mouse button.</param>
-        /// <param name="wheelHoverDelegate">The delegate which will be called when the scrolls.</param>
-        /// <param name="hoverDelegate">The delegate which will be called when the mouse is over the sprite.</param>
-        /// <param name="spritesDict">A dictionary to which the sprite will be added once constructed.</param>
-        /// <param name="dictKey">The key the dictionary will use when inserted in the <c>spritesDict</c></param>
         public SpriteBase(
             SpriteParameters spriteParameters
         ){
             this.spriteBatch = spriteParameters.spriteBatch;
 
             this.wrapper = spriteParameters.wrapper;
+            //Add to wrapper
+            if(this.wrapper!=null){
+                this.wrapper.Add(this);
+            }
 
             //Adding to groups
             this.groups=new List<ObjectGroup<SpriteObject>>();
@@ -150,30 +204,33 @@ namespace FCSG{
             this.color=spriteParameters.color;
 
             //Click delegates
-                this.leftClickDelegate = spriteParameters.leftClickDelegate;
+                this._leftClickDelegate = spriteParameters.leftClickDelegate;
                 this.middleClickDelegate = spriteParameters.middleClickDelegate;
                 this.rightClickDelegate = spriteParameters.rightClickDelegate;
                 this.wheelHoverDelegate = spriteParameters.wheelHoverDelegate;
                 this.hoverDelegate = spriteParameters.hoverDelegate;
-            this.precise=spriteParameters.precise;
+                
+                this.precise=spriteParameters.precise;
+
+                bool enableCollisionRectangle=true; //Controls wether the collision rectangle is enabled or not
+                if(this.leftClickDelegate==null && this.middleClickDelegate==null && this.rightClickDelegate==null && this.wheelHoverDelegate==null && this.hoverDelegate==null){
+                    enableCollisionRectangle=false;
+                }
 
             //Collision rectangle
-            if(spriteParameters.collisionRectangle==null){
-                this.collisionRectangle = new CollisionRectangle(this);
-            }else{
-                this.collisionRectangle = spriteParameters.collisionRectangle;
-            }
-
-            //Add to wrapper
-            if(wrapper!=null){
-                wrapper.Add(this);
+            if(spriteParameters.collisionRectangle!=null || enableCollisionRectangle){
+                if(spriteParameters.collisionRectangle!=null){
+                    this.collisionRectangle=spriteParameters.collisionRectangle; //Use the collision rectangle provided by the parameters
+                }else{
+                    this.collisionRectangle=new CollisionRectangle(this); //Create a new collision rectangle, just in case there are click delegates but the collision rectangle was not defined in the parameters
+                }
             }
 
             this.xVariable.Activate();
             this.yVariable.Activate();
             this.widthVariable.Activate();
             this.heightVariable.Activate();
-            if(this.collisionRectangle.sprite==null){
+            if(this.collisionRectangle!=null && this.collisionRectangle.sprite==null){
                 this.collisionRectangle.Activate(this);
             }
 
@@ -219,6 +276,9 @@ namespace FCSG{
 
         //TODO: make a method which takes a rectangle class to check collisions, so that it is more linear and compatible with actual game objects
         public bool CollidesWith(int x, int y){
+            if(collisionRectangle==null){
+                return false;
+            }
             return collisionRectangle.CollidesWith(x,y); //This uses the collision rectangle to check collisions, so that delegates can be used.
         }
 
