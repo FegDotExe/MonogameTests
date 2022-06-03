@@ -101,7 +101,7 @@ namespace MonogameTests
 
             LayerGroup group2=new LayerGroup();
 
-            int x_chess=10; //FIXME: uncomment this
+            int x_chess=10;
             int y_chess=10;
             RenderTarget2D chessThing=new RenderTarget2D(GraphicsDevice,16*x_chess,16*y_chess);
             for(int i=0; i<x_chess;i++){
@@ -240,17 +240,43 @@ namespace MonogameTests
             // wrapper.NewSprite(texto.texture,depth:1f,widthDelegate:(Sprite sprite)=>400,heightDelegate:(Sprite sprite)=>800);
             wrapper.Add(texto);
 
-            //wrapper.NewSprite(blue,width:100,height:100,xDelegate:(SpriteObject sprite)=>x);
-            //wrapper.NewSprite(blue,width:100,height:100,x:100,y:50);
+            //Isometric generator
+            Texture2D isometric=Content.Load<Texture2D>("Isometric");
 
-            // LayerGroup layerGroup=new LayerGroup();
-            // layerGroup.Add(randomSprite);
-            // layerGroup.Add(texto);
-            // layerGroup.Add(wrapper.NewSprite(blue,width:100,height:100,depth:0.5f));
-            // layerGroup.Add(wrapper.NewSprite(red,width:100,height:100,x:100,y:50,depth:0.5f));
-            // foreach(SpriteBase sprite in layerGroup.objects){
-            //     Console.WriteLine("depth: "+sprite.depth);
-            // }
+            LayerGroup isometricGroup=new LayerGroup();
+            int x_iso=8;
+            int y_iso=8;
+            //RenderTarget2D isometricTarget=new RenderTarget2D(GraphicsDevice,32+(8*x_iso),32+(16*y_iso));
+            for(int i=0; i<x_iso;i++){
+                for(int j=0; j<y_iso;j++){
+                    Color thisColor=new Color(0,255,255);
+                    if((i+j)%2==0){
+                        thisColor=new Color(0,0,255);
+                    }
+                    isometricGroup.Add(new Sprite(
+                        new SpriteParameters(spriteBatch:_spriteBatch,
+                        texture:isometric,
+                        depth:0.5f,
+                        x:16*(x_iso-1)+((-16*i)+(16*j)),
+                        y:(8*i)+(8*j),
+                        width:32,
+                        height:32,
+                        color:thisColor
+                        )
+                    ));
+                }
+            }
+
+            TextureGenerator generator=new TextureGenerator(GraphicsDevice,isometricGroup,32+(16*(x_iso-1))+(16*(y_iso-1)),16+(8*x_iso)+(8*y_iso),_spriteBatch,new SpriteBatchParameters(sortMode:SpriteSortMode.Deferred,samplerState:SamplerState.PointClamp));
+
+            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
+                texture:generator.Generate(),
+                depth:0.5f,
+                widthVariable:new LinkedVariableParams((SpriteBase sb)=>sb.texture.Width),
+                heightVariable:new LinkedVariableParams((SpriteBase sb)=>sb.texture.Height),
+                x:0,
+                y:0
+            )));
 
             clock=new GameClock();
             

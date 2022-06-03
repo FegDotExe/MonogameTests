@@ -10,6 +10,8 @@ namespace FCSG{
         private SpriteBatch spriteBatch;
         public int x;
         public int y;
+        public SpriteBatchParameters spriteBatchParams;
+
         public TextureGenerator(GraphicsDevice graphicsDevice){
             sprites=new LayerGroup();
             this.graphicsDevice=graphicsDevice;
@@ -35,12 +37,13 @@ namespace FCSG{
         /// <summary>
         /// Construct a texture generator which will use the given SpriteBatch
         /// </summary>
-        public TextureGenerator(GraphicsDevice graphicsDevice, LayerGroup sprites, int x, int y, SpriteBatch spriteBatch){
+        public TextureGenerator(GraphicsDevice graphicsDevice, LayerGroup sprites, int x, int y, SpriteBatch spriteBatch, SpriteBatchParameters spriteBatchParams=null){
             this.graphicsDevice=graphicsDevice;
             this.sprites=sprites;
             this.x=x;
             this.y=y;
             this.spriteBatch=spriteBatch;
+            this.spriteBatchParams=spriteBatchParams;
         }
         public Texture2D Generate(){
             SpriteBatch spriteBatch=this.spriteBatch;
@@ -48,7 +51,7 @@ namespace FCSG{
                 spriteBatch=new SpriteBatch(graphicsDevice);
             }
             RenderTarget2D renderTarget=new RenderTarget2D(graphicsDevice, x, y);
-            Utilities.DrawOntoTarget(renderTarget, sprites, spriteBatch);
+            Utilities.DrawOntoTarget(renderTarget, sprites, spriteBatch,spriteBatchParams);
             return renderTarget;
         }
 
