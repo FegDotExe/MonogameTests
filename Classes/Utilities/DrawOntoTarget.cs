@@ -10,12 +10,16 @@ namespace FCSG{
         /// <summary>
         /// Draws the given sprite on the target.
         /// </summary>
-        public static void DrawOntoTarget(RenderTarget2D renderTarget, SpriteBase sprite, SpriteBatch spriteBatch){
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, SpriteBase sprite, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
 
-            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
+            if(spriteBatchParameters==null){
+                spriteBatchParameters=new SpriteBatchParameters(samplerState:SamplerState.PointClamp);
+            }
+
+            spriteBatch.Begin(spriteBatchParameters);
             sprite.BasicDraw(spriteBatch,drawMiddle:false);
             spriteBatch.End();
 
@@ -25,12 +29,16 @@ namespace FCSG{
         /// <summary>
         /// Draws the given texture on the target. In order to draw, it uses the simplest Draw function possible (position at 0,0 and white as color)
         /// </summary>
-        public static void DrawOntoTarget(RenderTarget2D renderTarget, Texture2D texture, SpriteBatch spriteBatch){
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, Texture2D texture, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
 
-            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
+            if(spriteBatchParameters==null){
+                spriteBatchParameters=new SpriteBatchParameters(samplerState:SamplerState.PointClamp);
+            }
+
+            spriteBatch.Begin(spriteBatchParameters);
             spriteBatch.Draw(texture, Vector2.Zero, Color.White);
             spriteBatch.End();
 
@@ -40,12 +48,16 @@ namespace FCSG{
         /// <summary>
         /// Draws the given textures on the target. In order to draw, it uses the simplest Draw function possible (position at 0,0 and white as color), and goes from first to last texture in list
         /// </summary>
-        public static void DrawOntoTarget(RenderTarget2D renderTarget, List<Texture2D> textures, SpriteBatch spriteBatch){
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, List<Texture2D> textures, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
 
-            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
+            if(spriteBatchParameters==null){
+                spriteBatchParameters=new SpriteBatchParameters(samplerState:SamplerState.PointClamp);
+            }
+
+            spriteBatch.Begin(spriteBatchParameters);
             foreach(Texture2D texture in textures){
                 spriteBatch.Draw(texture, Vector2.Zero, Color.White);
             }
@@ -57,12 +69,16 @@ namespace FCSG{
         /// <summary>
         /// Draws the given sprites on the target. In order to draw, it uses each sprite's BasicDraw function, leaving the rest to the batch settings.
         /// </summary>
-        public static void DrawOntoTarget(RenderTarget2D renderTarget, LayerGroup sprites, SpriteBatch spriteBatch){
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, LayerGroup sprites, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
-            spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional 
+            spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional
 
-            spriteBatch.Begin(sortMode:SpriteSortMode.FrontToBack,samplerState:SamplerState.PointClamp);
+            if(spriteBatchParameters==null){
+                spriteBatchParameters=new SpriteBatchParameters(sortMode:SpriteSortMode.FrontToBack, samplerState:SamplerState.PointClamp);
+            }
+
+            spriteBatch.Begin(spriteBatchParameters);
             foreach(SpriteBase sprite in sprites.objects){
                 sprite.BasicDraw(spriteBatch, drawMiddle:false);
             }

@@ -14,7 +14,7 @@ namespace FCSG{
         public LayerGroup wheelHover;
         public LayerGroup hover;
 
-        private SpriteBatchParameters spriteBatchParams;
+        public SpriteBatchParameters spriteBatchParams;
 
         public Wrapper(SpriteBatch spriteBatch, SpriteBatchParameters spriteBatchParams=null){
             this.spriteBatch = spriteBatch;

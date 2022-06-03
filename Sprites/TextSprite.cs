@@ -65,8 +65,10 @@ namespace FCSG{
                 ElaborateTexture(reloadDimension:false,reloadLines:false);
             }
         }
+        public SpriteBatchParameters textBatchParameters;
         private List<string> lines;
         private RenderTarget2D renderTarget;
+        
         /// <summary>
         /// Constructs a new TextSprite.
         /// </summary>
@@ -90,7 +92,12 @@ namespace FCSG{
                 this.originalWidthVariable = new LinkedVariable(this,spriteParameters.originalWidthVariable);
             else
                 this.originalWidthVariable = new LinkedVariable(this, (SpriteBase sprite) => 1000);
-            
+
+            if(spriteParameters.textBatchParameters!=null)
+                this.textBatchParameters = spriteParameters.textBatchParameters;
+            else
+                this.textBatchParameters = new SpriteBatchParameters();
+
             this.wrapMode = spriteParameters.wrapMode;
             this.layoutMode = spriteParameters.layoutMode;
             this._offsetX = spriteParameters.offsetX;
@@ -100,7 +107,7 @@ namespace FCSG{
         }
 
         /// <summary>
-        /// Updates the texture of the sprite.
+        /// Updates the texture of the TextSprite.
         /// </summary>
         private void ElaborateTexture(bool reloadDimension=true,bool reloadLines=true){
             if(reloadDimension){
@@ -116,7 +123,7 @@ namespace FCSG{
 
             spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
             spriteBatch.GraphicsDevice.Clear(Color.Transparent);
-            spriteBatch.Begin(samplerState:SamplerState.PointClamp);
+            spriteBatch.Begin(this.textBatchParameters);
 
             foreach(string lineText in lines){
                 int x=0;

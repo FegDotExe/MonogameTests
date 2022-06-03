@@ -120,6 +120,7 @@ namespace FCSG{
             }
             #endregion ClickDelegates
         protected bool precise;
+        public Dictionary<string,object> variables{get; protected set;}
 
         protected CollisionRectangle collisionRectangle; //A rectangle used for collision detection. its coordinates are relative to the sprite's position, and so is the size.
         #endregion Fields
@@ -232,6 +233,12 @@ namespace FCSG{
             this.heightVariable.Activate();
             if(this.collisionRectangle!=null && this.collisionRectangle.sprite==null){
                 this.collisionRectangle.Activate(this);
+            }
+
+            if(spriteParameters.variables!=null){
+                this.variables=spriteParameters.variables;
+            }else{
+                this.variables=new Dictionary<string,object>();
             }
 
             this.draw=true;

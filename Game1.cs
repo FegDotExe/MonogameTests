@@ -231,8 +231,8 @@ namespace MonogameTests
 
             texto=new TextSprite(
                 new SpriteParameters(text:"",font:font,spriteBatch:_spriteBatch,
-                widthVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2),
-                heightVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2),
+                widthVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+                heightVariable:new LinkedVariableParams((SpriteBase sprite)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/2,new LinkedVariable[] {resizeVariableW,resizeVariableH}),
                 wrapMode:TextSprite.WrapMode.Word,originalHeightVariable:new LinkedVariableParams((SpriteBase sprite)=>2000),originalWidthVariable:new LinkedVariableParams((SpriteBase sprite)=>2000),depth:1f)
             );
 

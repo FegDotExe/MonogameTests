@@ -39,9 +39,12 @@ namespace FCSG{
         public string dictKey;
         public CollisionRectangle collisionRectangle;
         public bool precise; //Wether clicks should be pixel-precise or not.
+        public Dictionary<string,object> variables;
+        public SpriteBatchParameters textBatchParameters; //Used to draw the text sub-texture in TextSprite.
 
         #endregion Fields
         #region Constructor
+
         /// <param name="depth">The depth of the sprite. The higher the number, the closer to the camera. The value can vary between 1 and 0.</param>
         /// <param name="xDelegate">The delegate which returns the x position of the sprite.</param>
         /// <param name="yDelegate">The delegate which returns the y position of the sprite.</param>
@@ -59,6 +62,9 @@ namespace FCSG{
         /// <param name="hoverDelegate">The delegate which will be called when the mouse is over the sprite.</param>
         /// <param name="spritesDict">A dictionary to which the sprite will be added once constructed.</param>
         /// <param name="dictKey">The key the dictionary will use when inserted in the <c>spritesDict</c></param>
+        /// <summary>
+        /// Constructor for SpriteParameters.
+        /// </summary>
         public SpriteParameters(
             SpriteBatch spriteBatch=null,
             Texture2D texture=null, //Only for Sprite
@@ -93,7 +99,9 @@ namespace FCSG{
             bool precise=false,
             Dictionary<string, SpriteBase> spritesDict=null,
             string dictKey=null,
-            CollisionRectangle collisionRectangle=null
+            CollisionRectangle collisionRectangle=null,
+            Dictionary<string,object> variables=null,
+            SpriteBatchParameters textBatchParameters=null
         ){
             //Variables which are not modified by default
             this.spriteBatch=spriteBatch;
@@ -116,6 +124,8 @@ namespace FCSG{
             this.spritesDict=spritesDict;
             this.dictKey=dictKey;
             this.collisionRectangle=collisionRectangle;
+            this.variables=variables;
+            this.textBatchParameters=textBatchParameters;
 
             // Position variables
                 this.xVariable=xVariable;
