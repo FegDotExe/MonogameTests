@@ -67,7 +67,7 @@ namespace FCSG{
         }
 
         /// <summary>
-        /// Draws the given sprites on the target. In order to draw, it uses each sprite's BasicDraw function, leaving the rest to the batch settings.
+        /// Draws the given sprites on the target. In order to draw, it uses each sprite's BasicDraw function and it calls the sprites in the same order they have inside of the LayerGroup, leaving the rest to the batch settings.
         /// </summary>
         public static void DrawOntoTarget(RenderTarget2D renderTarget, LayerGroup sprites, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
             spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
@@ -80,6 +80,27 @@ namespace FCSG{
 
             spriteBatch.Begin(spriteBatchParameters);
             foreach(SpriteBase sprite in sprites.objects){
+                sprite.BasicDraw(spriteBatch, drawMiddle:false);
+            }
+            spriteBatch.End();
+
+            spriteBatch.GraphicsDevice.SetRenderTarget(null);
+        }
+
+        /// <summary>
+        /// Draws the given sprites on the target. In order to draw, it uses each sprite's BasicDraw function, leaving the rest to the batch settings.
+        /// </summary>
+        public static void DrawOntoTarget(RenderTarget2D renderTarget, List<SpriteBase> sprites, SpriteBatch spriteBatch,SpriteBatchParameters spriteBatchParameters=null){
+            spriteBatch=new SpriteBatch(spriteBatch.GraphicsDevice);
+            spriteBatch.GraphicsDevice.SetRenderTarget(renderTarget);
+            spriteBatch.GraphicsDevice.Clear(Color.Transparent);// TODO: make this optional
+
+            if(spriteBatchParameters==null){
+                spriteBatchParameters=new SpriteBatchParameters(sortMode:SpriteSortMode.FrontToBack, samplerState:SamplerState.PointClamp);
+            }
+
+            spriteBatch.Begin(spriteBatchParameters);
+            foreach(SpriteBase sprite in sprites){
                 sprite.BasicDraw(spriteBatch, drawMiddle:false);
             }
             spriteBatch.End();

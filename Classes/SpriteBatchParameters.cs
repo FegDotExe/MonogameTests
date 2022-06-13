@@ -30,5 +30,19 @@ namespace FCSG{
             this.effect=effect;
             this.transformMatrix=transformMatrix;
         }
+
+        public static SpriteBatchParameters operator +(SpriteBatchParameters sbp1, SpriteBatchParameters sbp2){
+            SpriteBatchParameters output=new SpriteBatchParameters();
+
+            output.sortMode=Utilities.Choose(sbp1.sortMode, sbp2.sortMode);
+            output.blendState=Utilities.Choose(sbp1.blendState, sbp2.blendState);
+            output.samplerState=Utilities.Choose(sbp1.samplerState, sbp2.samplerState);
+            output.depthStencilState=Utilities.Choose(sbp1.depthStencilState, sbp2.depthStencilState);
+            output.rasterizerState=Utilities.Choose(sbp1.rasterizerState, sbp2.rasterizerState);
+            output.effect=Utilities.Choose(sbp1.effect, sbp2.effect);
+            output.transformMatrix=Utilities.Choose(sbp1.transformMatrix, sbp2.transformMatrix);
+
+            return output;
+        }
     }
 }

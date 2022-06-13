@@ -45,7 +45,7 @@ namespace FCSG{
         }
         public WrapMode wrapMode;
         public LayoutMode layoutMode;
-        private int _offsetX;
+        private int _offsetX; //Offset of the text when Elaborated
         public int offsetX{
             get{
                 return _offsetX;
@@ -55,7 +55,7 @@ namespace FCSG{
                 ElaborateTexture(reloadDimension:false,reloadLines:false);
             }
         }
-        private int _offsetY;
+        private int _offsetY; //Offset of the text when Elaborated
         public int offsetY{
             get{
                 return _offsetY;

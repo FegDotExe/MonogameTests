@@ -10,8 +10,8 @@ namespace MonogameTests
     public class Game1 : Game
     {
         bool left_held=false;
-        bool middle_held=false;
-        bool right_held=false;
+        // bool middle_held=false;
+        // bool right_held=false;
         Dictionary<string, SpriteBase> spriteDict;
         Texture2D totem_of_time;
         Texture2D red;
@@ -29,6 +29,10 @@ namespace MonogameTests
 
         LinkedVariable x=new LinkedVariable((SpriteBase sb)=>0);
         LinkedVariable y=new LinkedVariable((SpriteBase sb)=>0);
+
+        LinkedVariable x2=new LinkedVariable((SpriteBase sb)=>0);
+        LinkedVariable y2=new LinkedVariable((SpriteBase sb)=>0);
+
         float fps=0f;
         ObjectGroup<SpriteObject> group;
 
@@ -37,6 +41,8 @@ namespace MonogameTests
 
         private LinkedVariable resizeVariableW;
         private LinkedVariable resizeVariableH;
+
+        private Dictionary<string,TimeEvent> timeEvents;
 
         public Game1()
         {
@@ -61,6 +67,8 @@ namespace MonogameTests
             SpriteParameters defaultParameters=new SpriteParameters(spriteBatch:_spriteBatch);
 
             wrapper=new Wrapper(_spriteBatch);
+
+            timeEvents=new Dictionary<string,TimeEvent>();
 
             totem_of_time=Content.Load<Texture2D>("assets/totem_of_time");
             red=Content.Load<Texture2D>("red");
@@ -133,10 +141,10 @@ namespace MonogameTests
                 new SpriteParameters(spriteBatch:_spriteBatch,
                 texture:chessTextureGenerator.Generate(),
                 depth:0.1f,
-                xVariable:new LinkedVariableParams((SpriteBase sb)=>(GraphicsDevice.Viewport.Width-Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height))/2,sensitiveVariables:new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+                xVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.CenterX(sb,GraphicsDevice.Viewport.Width),sensitiveVariables:new LinkedVariable[] {resizeVariableW,resizeVariableH}),
                 y:0,
-                widthVariable:new LinkedVariableParams((SpriteBase sb)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
-                heightVariable:new LinkedVariableParams((SpriteBase so)=>Math.Min(GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+                widthVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.FitWidth(sb,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+                heightVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.FitHeight(sb,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableW,resizeVariableH}),
                 spritesDict: spriteDict,
                 dictKey: "chess",
                 leftClickDelegate: (SpriteBase sb, int x, int y)=>{
@@ -203,30 +211,21 @@ namespace MonogameTests
 
             wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
                 texture:white,
-                yVariable:new LinkedVariableParams(
-                    (SpriteBase sb)=>spriteDict["bigSquare"].x,
-                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["bigSquare"].xVariable}),
-                    spritesDict: spriteDict,
-                    dictKey: "test1"
-            )));
-            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
-                texture:white,
                 xVariable:new LinkedVariableParams(
-                    (SpriteBase sb)=>spriteDict["test1"].y,
-                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["test1"].yVariable}),
-                    spritesDict: spriteDict,
-                    dictKey: "test2"
-            )));
-            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
-                texture:white,
-                xVariable:new LinkedVariableParams(
-                    (SpriteBase sb)=>spriteDict["bigSquare"].x,
-                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["bigSquare"].xVariable}),
-                yVariable:new LinkedVariableParams(
-                    (SpriteBase sb)=>spriteDict["test2"].x,
-                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {spriteDict["test2"].xVariable}),
+                    (SpriteBase sb)=>(int)x2,
+                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {x2}),
+                y:0,
                 spritesDict: spriteDict,
-                dictKey: "test3"
+                dictKey: "test1"
+            )));
+            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
+                texture:white,
+                xVariable:new LinkedVariableParams(
+                    (SpriteBase sb)=>(int)x,
+                    sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {x}),
+                y:100,
+                spritesDict: spriteDict,
+                dictKey: "test2"
             )));
 
             texto=new TextSprite(
@@ -249,7 +248,7 @@ namespace MonogameTests
             //RenderTarget2D isometricTarget=new RenderTarget2D(GraphicsDevice,32+(8*x_iso),32+(16*y_iso));
             for(int i=0; i<x_iso;i++){
                 for(int j=0; j<y_iso;j++){
-                    Color thisColor=new Color(0,255,255);
+                    Color thisColor=new Color(255,0,0);
                     if((i+j)%2==0){
                         thisColor=new Color(0,0,255);
                     }
@@ -272,10 +271,10 @@ namespace MonogameTests
             wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
                 texture:generator.Generate(),
                 depth:0.5f,
-                widthVariable:new LinkedVariableParams((SpriteBase sb)=>sb.texture.Width),
-                heightVariable:new LinkedVariableParams((SpriteBase sb)=>sb.texture.Height),
-                x:0,
-                y:0
+                widthVariable:new LinkedVariableParams((SpriteBase sb)=>3*ScaleMethods.FitWidth(sb,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/4,new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+                heightVariable:new LinkedVariableParams((SpriteBase sb)=>3*ScaleMethods.FitHeight(sb,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/4,new LinkedVariable[] {resizeVariableW,resizeVariableH}),
+                xVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.CenterX(sb,GraphicsDevice.Viewport.Width),new LinkedVariable[] {resizeVariableW}),
+                yVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.CenterY(sb,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableH})
             )));
 
             clock=new GameClock();
@@ -296,22 +295,61 @@ namespace MonogameTests
                 Exit();
             if(Keyboard.GetState().IsKeyDown(Keys.D)){
                 //x=x+1;
-                if(timeEvent==null){
-                    int xCopy=x;
-                    timeEvent=new TimeEvent(requiredTime,(double time)=>{x.Set(xCopy+(int)(amount*time));}, (double time)=>{x.Set(xCopy+amount);},(int)clock.elapsed);
-                }
+                int xCopy=x;
+                timeEvent=new TimeEvent(
+                    requiredTime,
+                    (double time)=>{x.Set(xCopy+(int)(amount*time));}, 
+                    (double time)=>{x.Set(xCopy+amount);},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "moveX"
+                );
+                timeEvent=new TimeEvent(
+                    requiredTime/2,
+                    (double time)=>{x2.Set(xCopy+(int)((amount/2)*time));}, 
+                    (double time)=>{x2.Set(xCopy+(amount/2));},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "moveX2"
+                );
             }
             else if(Keyboard.GetState().IsKeyDown(Keys.A)){
-                if(timeEvent==null){
-                    int xCopy=x;
-                    timeEvent=new TimeEvent(requiredTime,(double time)=>{x.Set(xCopy+(int)(-amount*time));}, (double time)=>{x.Set(xCopy-amount);},(int)clock.elapsed);
-                }
+                int xCopy=x;
+                timeEvent=new TimeEvent(
+                    requiredTime,(double time)=>{x.Set(xCopy+(int)(-amount*time));},
+                    (double time)=>{x.Set(xCopy-amount);},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "moveX"
+                );
+                timeEvent=new TimeEvent(
+                    requiredTime/2,
+                    (double time)=>{x2.Set(xCopy+(int)((-amount/2)*time));}, 
+                    (double time)=>{x2.Set(xCopy-(amount/2));},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "moveX2"
+                );
             }
             if(Keyboard.GetState().IsKeyDown(Keys.W)){
-                y.Set(y-1);
+                int yCopy=y;
+                timeEvent=new TimeEvent(
+                    requiredTime/2,(double time)=>{y.Set(yCopy+(int)(-(amount/2)*time));},
+                    (double time)=>{y.Set(yCopy-(amount/2));},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "moveY"
+                );
             }
             else if(Keyboard.GetState().IsKeyDown(Keys.S)){
-                y.Set(y+1);
+                int yCopy=y;
+                timeEvent=new TimeEvent(
+                    requiredTime/2,(double time)=>{y.Set(yCopy+(int)((amount/2)*time));},
+                    (double time)=>{y.Set(yCopy+(amount/2));},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "moveY"
+                );
             }
             if(Keyboard.GetState().IsKeyDown(Keys.L)){
                 //randomSprite.Remove();
@@ -364,10 +402,17 @@ namespace MonogameTests
             clock.Update();
             //Console.WriteLine("Elapsed time: "+clock.elapsed);
             
-            if(timeEvent!=null){
-                timeEvent.RunFunction();
-                if(timeEvent.isFinished){
-                    timeEvent=null;
+            // if(timeEvent!=null){
+            //     timeEvent.RunFunction();
+            //     if(timeEvent.isFinished){
+            //         timeEvent=null;
+            //     }
+            // }
+
+            foreach(KeyValuePair<string,TimeEvent> kvp in timeEvents){
+                kvp.Value.RunFunction();
+                if(kvp.Value.isFinished){
+                    timeEvents.Remove(kvp.Key);
                 }
             }
 

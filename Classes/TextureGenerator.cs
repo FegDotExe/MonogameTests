@@ -1,11 +1,12 @@
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace FCSG{
     /// <summary>
     /// A class used to simply generate textures composed of many different sprites.
     /// </summary>
     public class TextureGenerator{
-        public LayerGroup sprites;
+        public List<SpriteBase> sprites;
         private GraphicsDevice graphicsDevice;
         private SpriteBatch spriteBatch;
         public int x;
@@ -45,10 +46,19 @@ namespace FCSG{
             this.spriteBatch=spriteBatch;
             this.spriteBatchParams=spriteBatchParams;
         }
-        public Texture2D Generate(){
-            SpriteBatch spriteBatch=this.spriteBatch;
+
+        /// <summary>
+        /// Generate the texture related to the given generator. If spriteBatchParams are given, they will be added to the default ones.
+        /// </summary>
+        public Texture2D Generate(SpriteBatchParameters spriteBatchParams=null){
+            // SpriteBatch spriteBatch=this.spriteBatch;
             if(spriteBatch==null){
                 spriteBatch=new SpriteBatch(graphicsDevice);
+            }
+            if(spriteBatchParams==null){
+                spriteBatchParams=this.spriteBatchParams;
+            }else{
+                spriteBatchParams=this.spriteBatchParams+spriteBatchParams;
             }
             RenderTarget2D renderTarget=new RenderTarget2D(graphicsDevice, x, y);
             Utilities.DrawOntoTarget(renderTarget, sprites, spriteBatch,spriteBatchParams);
