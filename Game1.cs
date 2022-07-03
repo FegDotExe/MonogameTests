@@ -44,6 +44,8 @@ namespace MonogameTests
 
         private Dictionary<string,TimeEvent> timeEvents;
 
+        private Dictionary<string,Object> customVariables;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -61,6 +63,7 @@ namespace MonogameTests
 
         protected override void LoadContent()
         {
+            customVariables=new Dictionary<string, object>();
             spriteDict = new Dictionary<string, SpriteBase>();
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -227,6 +230,16 @@ namespace MonogameTests
                 spritesDict: spriteDict,
                 dictKey: "test2"
             )));
+            #if !DEBUG //Yup, it works
+            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
+                texture:white,
+                x:100,
+                y:100,
+                color: new Color(255,0,255,255),
+                spritesDict: spriteDict,
+                dictKey: "testComp"
+            )));
+            #endif
 
             texto=new TextSprite(
                 new SpriteParameters(text:"",font:font,spriteBatch:_spriteBatch,
@@ -240,18 +253,18 @@ namespace MonogameTests
             wrapper.Add(texto);
 
             //Isometric generator
-            Texture2D isometric=Content.Load<Texture2D>("Isometric");
+            Texture2D isometric=Content.Load<Texture2D>("dirt");
 
             LayerGroup isometricGroup=new LayerGroup();
-            int x_iso=8;
+            int x_iso=10;
             int y_iso=8;
             //RenderTarget2D isometricTarget=new RenderTarget2D(GraphicsDevice,32+(8*x_iso),32+(16*y_iso));
             for(int i=0; i<x_iso;i++){
                 for(int j=0; j<y_iso;j++){
-                    Color thisColor=new Color(255,0,0);
-                    if((i+j)%2==0){
-                        thisColor=new Color(0,0,255);
-                    }
+                    // Color thisColor=new Color(255,0,0);
+                    // if((i+j)%2==0){
+                    //     thisColor=new Color(0,0,255);
+                    // }
                     isometricGroup.Add(new Sprite(
                         new SpriteParameters(spriteBatch:_spriteBatch,
                         texture:isometric,
@@ -259,8 +272,8 @@ namespace MonogameTests
                         x:16*(x_iso-1)+((-16*i)+(16*j)),
                         y:(8*i)+(8*j),
                         width:32,
-                        height:32,
-                        color:thisColor
+                        height:32 //,z
+                        // color:thisColor
                         )
                     ));
                 }
@@ -274,7 +287,26 @@ namespace MonogameTests
                 widthVariable:new LinkedVariableParams((SpriteBase sb)=>3*ScaleMethods.FitWidth(sb,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/4,new LinkedVariable[] {resizeVariableW,resizeVariableH}),
                 heightVariable:new LinkedVariableParams((SpriteBase sb)=>3*ScaleMethods.FitHeight(sb,GraphicsDevice.Viewport.Width,GraphicsDevice.Viewport.Height)/4,new LinkedVariable[] {resizeVariableW,resizeVariableH}),
                 xVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.CenterX(sb,GraphicsDevice.Viewport.Width),new LinkedVariable[] {resizeVariableW}),
-                yVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.CenterY(sb,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableH})
+                yVariable:new LinkedVariableParams((SpriteBase sb)=>ScaleMethods.CenterY(sb,GraphicsDevice.Viewport.Height),new LinkedVariable[] {resizeVariableH}),
+                spritesDict: spriteDict,
+                dictKey:"base"
+            )));
+
+            LinkedVariable playerX=new LinkedVariable((SpriteBase sb)=>0d);
+            LinkedVariable playerY=new LinkedVariable((SpriteBase sb)=>0d);
+            playerX.Round(false);
+            customVariables.Add("playerX",playerX);
+            customVariables.Add("playerY",playerY);
+
+            wrapper.Add(new Sprite(defaultParameters+new SpriteParameters(
+                texture:isometric,
+                depth:0.6f,//TODO: adjust so that it actually works
+                xVariable:new LinkedVariableParams((SpriteBase sb)=>{
+                    return spriteDict["base"].x+(((16*((double)x_iso-1)+((-16*(double)playerX)+(16*(double)playerY)))*((double)spriteDict["base"].width))/(32+(16*((double)x_iso-1))+(16*((double)y_iso-1))));
+                },new LinkedVariable[] {playerX,playerY,spriteDict["base"].widthVariable,spriteDict["base"].xVariable}),
+                yVariable:new LinkedVariableParams((SpriteBase sb)=>spriteDict["base"].y+(((8*(double)playerX)+(8*(double)playerY))*spriteDict["base"].height/(16+(8*x_iso)+(8*y_iso)))-(sb.height/2),sensitiveDelegate:(SpriteBase sb)=>new LinkedVariable[] {spriteDict["base"].yVariable,sb.heightVariable,playerX,playerY}),
+                widthVariable: new LinkedVariableParams((SpriteBase sb)=>(spriteDict["base"].width*32)/(32+(16*(x_iso-1))+(16*(y_iso-1))),new LinkedVariable[] {spriteDict["base"].widthVariable}),
+                heightVariable:new LinkedVariableParams((SpriteBase sb)=>sb.widthVariable, sensitiveDelegate: (SpriteBase sb)=>new LinkedVariable[] {sb.widthVariable})
             )));
 
             clock=new GameClock();
@@ -312,6 +344,16 @@ namespace MonogameTests
                     timeEvents,
                     "moveX2"
                 );
+
+                double playerXCopy=(double)(LinkedVariable)customVariables["playerX"];
+                new TimeEvent(
+                    requiredTime,
+                    (double time)=>{((LinkedVariable)customVariables["playerX"]).Set(playerXCopy-time);},
+                    (double time)=>{((LinkedVariable)customVariables["playerX"]).Set(playerXCopy-1);},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "movePX"
+                );
             }
             else if(Keyboard.GetState().IsKeyDown(Keys.A)){
                 int xCopy=x;
@@ -330,6 +372,16 @@ namespace MonogameTests
                     timeEvents,
                     "moveX2"
                 );
+
+                double playerXCopy=(double)(LinkedVariable)customVariables["playerX"];
+                new TimeEvent(
+                    requiredTime,
+                    (double time)=>{((LinkedVariable)customVariables["playerX"]).Set(playerXCopy+time);},
+                    (double time)=>{((LinkedVariable)customVariables["playerX"]).Set(playerXCopy+1);},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "movePX"
+                );
             }
             if(Keyboard.GetState().IsKeyDown(Keys.W)){
                 int yCopy=y;
@@ -340,6 +392,16 @@ namespace MonogameTests
                     timeEvents,
                     "moveY"
                 );
+
+                double playerYCopy=(double)(LinkedVariable)customVariables["playerY"];
+                new TimeEvent(
+                    requiredTime,
+                    (double time)=>{((LinkedVariable)customVariables["playerY"]).Set(playerYCopy-time);},
+                    (double time)=>{((LinkedVariable)customVariables["playerY"]).Set(playerYCopy-1);},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "movePY"
+                );
             }
             else if(Keyboard.GetState().IsKeyDown(Keys.S)){
                 int yCopy=y;
@@ -349,6 +411,16 @@ namespace MonogameTests
                     (int)clock.elapsed,
                     timeEvents,
                     "moveY"
+                );
+
+                double playerYCopy=(double)(LinkedVariable)customVariables["playerY"];
+                new TimeEvent(
+                    requiredTime,
+                    (double time)=>{((LinkedVariable)customVariables["playerY"]).Set(playerYCopy+time);},
+                    (double time)=>{((LinkedVariable)customVariables["playerY"]).Set(playerYCopy+1);},
+                    (int)clock.elapsed,
+                    timeEvents,
+                    "movePY"
                 );
             }
             if(Keyboard.GetState().IsKeyDown(Keys.L)){

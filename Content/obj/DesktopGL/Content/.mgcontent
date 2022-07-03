@@ -4,21 +4,25 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/blue.png</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/Isometrico Prova 2.png</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/precise.png</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/red.png</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/redl.png</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/white.png</File>
-    <File>C:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/whiteframe.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/blue.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/Isometrico Prova 2.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/Isometrico terra.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/precise.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/red.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/redl.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/test.agr</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/white.png</File>
+    <File>c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/whiteframe.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File>Isometric.png</File>
+    <File>dirt.png</File>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

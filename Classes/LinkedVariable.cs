@@ -8,7 +8,7 @@ namespace FCSG{
         protected bool updating=false; //If true, it means that the value is being updated (and has not yet been set)
         protected ObjectSpriteBaseDelegate objectDelegate;
         protected SpriteBase spriteBase;
-        protected List<LinkedVariable> linkedVariables=new List<LinkedVariable>();
+        protected List<LinkedVariable> linkedVariables=new List<LinkedVariable>(); //List of variables which will be updated when this variable is updated
         protected LinkedVarListSpriteBaseDelegate linkedVariablesDelegate=(SpriteBase sb)=>new LinkedVariable[] {}; //This is used to retrieve self-referencial values
 
         protected object _value=null;
@@ -246,6 +246,14 @@ namespace FCSG{
                 else{
                     throw new System.InvalidCastException("Cannot cast "+sv.objectValue.GetType()+" to int");
                 }
+            }
+        }
+
+        public static implicit operator double(LinkedVariable lv){
+            if(lv.objectValue.GetType()==typeof(double)){
+                return (double)lv.objectValue;
+            }else{
+                throw new System.InvalidCastException("Cannot cast "+lv.objectValue.GetType()+" to double");
             }
         }
 

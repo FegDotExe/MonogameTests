@@ -1,3 +1,2 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/assets/totem_of_time.png","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/assets/totem_of_time.xnb","TextureProcessor","Texture2DContent",3859,1638485,0,3198244
-"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/FreeSans.spritefont","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/FreeSans.xnb","FontDescriptionProcessor","SpriteFontContent",2011,21538,0,1606043
+"c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/test.agr","c:/Users/filip/Documents/Programmi/CSharp/MonogameTests/Content/bin/DesktopGL/test.xnb","Processor1","List<string>",20,82,0,1206761
